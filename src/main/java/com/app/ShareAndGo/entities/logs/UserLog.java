@@ -1,8 +1,5 @@
 package com.app.ShareAndGo.entities.logs;
 
-import com.app.ShareAndGo.entities.Admin;
-import com.app.ShareAndGo.entities.BaseEntity;
-import com.app.ShareAndGo.entities.Booking;
 import com.app.ShareAndGo.entities.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;

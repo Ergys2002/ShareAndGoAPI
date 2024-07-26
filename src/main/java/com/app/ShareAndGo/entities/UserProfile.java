@@ -15,10 +15,8 @@ import java.time.LocalDate;
 @Builder
 @Table(name = "user_profile")
 public class UserProfile extends BaseEntity{
-    @Column(name = "first_name")
-    private String firstName;
-    @Column(name = "last_name")
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private String gender;
     @Column(name = "profile_picture_url")
     private String profilePictureUrl;

@@ -2,6 +2,7 @@ package com.app.ShareAndGo.entities;
 
 import com.app.ShareAndGo.entities.logs.BookingLog;
 import com.app.ShareAndGo.entities.logs.TripLog;
+import com.app.ShareAndGo.enums.TripType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,13 +19,11 @@ import java.util.Set;
 @Table(name = "trip")
 public class Trip extends BaseEntity{
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "start_location_id", referencedColumnName = "id")
-    private Location start;
+    @Column(name = "start_city")
+    private String startCity;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "end_location_id", referencedColumnName = "id")
-    private Location end;
+    @Column(name = "end_city")
+    private String endCity;
 
     private LocalDate date;
     private LocalTime time;
@@ -33,6 +32,9 @@ public class Trip extends BaseEntity{
 
     @Column(name = "available_seats")
     private int availableSeats;
+
+    @Enumerated
+    private TripType tripType;
 
     @ManyToOne
     @JoinColumn(name = "driver_id" , referencedColumnName = "id")

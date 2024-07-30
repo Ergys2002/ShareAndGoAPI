@@ -2,6 +2,8 @@ package com.app.ShareAndGo.controllers;
 
 import com.app.ShareAndGo.dto.requests.AdminCreationRequest;
 import com.app.ShareAndGo.dto.requests.AdminLoginRequest;
+import com.app.ShareAndGo.dto.requests.UserLoginRequest;
+import com.app.ShareAndGo.dto.requests.UserSignUpRequest;
 import com.app.ShareAndGo.services.interfaces.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +22,21 @@ public class UserController {
 
     @PostMapping("/admin/login")
     public ResponseEntity<?> adminLogin(@Valid @RequestBody AdminLoginRequest adminLoginRequest){
-        System.out.println(adminLoginRequest);
         return userService.adminLogin(adminLoginRequest);
     }
 
     @PostMapping("/sup-admin/create-admin")
     public ResponseEntity<?> createAdmin(@Valid @RequestBody AdminCreationRequest adminData){
-        System.out.println(adminData);
         return userService.createAdminRequest(adminData);
+    }
+
+    @PostMapping("/user/sign-up")
+    public ResponseEntity<?> userSignUp(@Valid @RequestBody UserSignUpRequest userData){
+        return userService.signUp(userData);
+    }
+
+    @PostMapping("/user/login")
+    public ResponseEntity<?> userLogin(@Valid @RequestBody UserLoginRequest userLoginRequest){
+        return userService.login(userLoginRequest);
     }
 }

@@ -35,7 +35,6 @@ public class User extends BaseEntity implements UserDetails{
 
     private String email;
 
-    @NotBlank(message = "NID is required")
     private String nid;
 
     private boolean disabled;

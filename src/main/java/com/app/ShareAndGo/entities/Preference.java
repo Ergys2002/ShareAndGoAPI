@@ -12,6 +12,6 @@ import lombok.*;
 @Builder
 @Table(name = "preference")
 public class Preference extends BaseEntity{
-    private String preferenceKey;
-    private String preferenceValue;
+    private String title;
+    private int preferenceUsage;
 }

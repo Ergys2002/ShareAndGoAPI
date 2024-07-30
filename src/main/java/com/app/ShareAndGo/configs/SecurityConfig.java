@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sup-admin/create-admin").hasAuthority("SUPERADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/user/sign-up","/api/user/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/trip/create-trip","/api/preference/choose-preferences").hasAuthority("USER")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

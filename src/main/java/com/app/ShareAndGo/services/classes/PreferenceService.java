@@ -68,9 +68,6 @@ public class PreferenceService implements IPreferenceService {
                                         .build();
                             })
                             .collect(Collectors.toSet());
-
-//                    latestTrip.setTripPreferences(tripPreferences);
-//                    tripRepository.save(latestTrip);
                     tripPreferenceRepository.saveAll(tripPreferences);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi per te cilin po zgjidhni preferencat nuk ekziston");

@@ -24,6 +24,8 @@ public class TripApplication extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
+    @Column(name = "number_of_seats")
+    private int numberOfSeats;
 
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id")
@@ -33,9 +35,8 @@ public class TripApplication extends BaseEntity{
     @JoinColumn(name = "applicant_id", referencedColumnName = "id")
     private User applicant;
 
-    @OneToOne
-    @JoinColumn(name = "package_id" , referencedColumnName = "id")
-    private Package aPackage;
+    @OneToMany(mappedBy = "tripApplication")
+    private Set<Package> packages;
 
     @OneToMany(mappedBy = "tripApplication")
     private Set<TripApplicationLog> tripApplicationLogs;

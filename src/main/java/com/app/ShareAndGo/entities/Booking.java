@@ -23,9 +23,8 @@ public class Booking extends BaseEntity{
     @JoinColumn(name = "trip_id", referencedColumnName = "id")
     private Trip trip;
 
-    @OneToOne
-    @JoinColumn(name = "package_id", referencedColumnName = "id")
-    private Package aPackage;
+    @OneToMany(mappedBy = "booking")
+    private Set<Package> packages;
 
     @ManyToOne
     @JoinColumn(name = "passenger_id", referencedColumnName = "id")

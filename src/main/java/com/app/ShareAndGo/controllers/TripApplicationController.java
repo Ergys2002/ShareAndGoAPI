@@ -5,6 +5,7 @@ import com.app.ShareAndGo.services.interfaces.ITripApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +16,7 @@ public class TripApplicationController{
     private final ITripApplicationService tripApplicationService;
 
     @PostMapping("/apply-to-reserve")
-    public ResponseEntity<?> applyForTripReservation(TripApplicationRequest tripApplicationRequest){
+    public ResponseEntity<?> applyForTripReservation(@RequestBody TripApplicationRequest tripApplicationRequest){
         return tripApplicationService.applyForTripReservation(tripApplicationRequest);
     }
 }

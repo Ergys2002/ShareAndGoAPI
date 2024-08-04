@@ -34,6 +34,9 @@ public class Trip extends BaseEntity{
     @Column(name = "price_per_seat")
     private double pricePerSeat;
 
+    @Column(name = "total_seats")
+    private int totalSeats;
+
     @Column(name = "available_seats")
     private int availableSeats;
 

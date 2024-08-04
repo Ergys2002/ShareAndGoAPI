@@ -34,6 +34,7 @@ public class TripService implements ITripService {
         Trip newTrip = Trip.builder()
                 .startCity(tripData.getStartCity())
                 .endCity(tripData.getEndCity())
+                .totalSeats(tripData.getPassengerCount())
                 .availableSeats(tripData.getPassengerCount())
                 .date(LocalDate.parse(tripData.getDateOfTrip()))
                 .distance(tripData.getDistance())
@@ -75,6 +76,14 @@ public class TripService implements ITripService {
     }
     public Trip getLatestTripOfAuthenticatedUser(){
         return tripRepository.findFirstByDriverOrderByIdDesc(userService.getAuthenticatedUser());
+    }
+
+    public Trip getTripById(Long id){
+        return tripRepository.findById(id).orElse(null);
+    }
+
+    public Trip saveTrip(Trip trip){
+        return tripRepository.save(trip);
     }
 
     @Override

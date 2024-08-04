@@ -13,7 +13,7 @@ import java.util.List;
 @ToString
 public class TripApplicationRequest {
     private String applicationType;
-    private String tripId;
+    private Long tripId;
     private int numberOfSeats;
     private List<PackageRequest> packages;
 }

@@ -14,7 +14,7 @@ public class TripCreationRequest {
     private String endCity;
     private String dateOfTrip;
     private String timeOfTrip;
-    private String bookingType;
+    private double pricePerSeat;
     private int passengerCount;
     private double duration;
     private double distance;

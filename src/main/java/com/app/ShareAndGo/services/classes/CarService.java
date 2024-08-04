@@ -1,6 +1,7 @@
 package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.AddCarRequest;
+import com.app.ShareAndGo.dto.responses.CarResponse;
 import com.app.ShareAndGo.entities.Car;
 import com.app.ShareAndGo.entities.User;
 import com.app.ShareAndGo.repositories.CarRepository;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -76,5 +78,17 @@ public class CarService implements ICarService {
 
         carRepository.deleteById(carId);
         return ResponseEntity.status(HttpStatus.OK).body("Makina u fshi me sukses");
+    }
+
+    @Override
+    public ResponseEntity<?> getAllCars() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+        Set<CarResponse> carsOfAuthenticatedUser = carRepository.findCarsByOwner(authenticatedUser);
+
+        if(carsOfAuthenticatedUser.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ka asnje makine");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(carsOfAuthenticatedUser);
     }
 }

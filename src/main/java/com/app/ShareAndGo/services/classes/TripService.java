@@ -34,12 +34,11 @@ public class TripService implements ITripService {
         Trip newTrip = Trip.builder()
                 .startCity(tripData.getStartCity())
                 .endCity(tripData.getEndCity())
-                .tripType(TripType.valueOf(tripData.getBookingType()))
                 .availableSeats(tripData.getPassengerCount())
                 .date(LocalDate.parse(tripData.getDateOfTrip()))
                 .distance(tripData.getDistance())
-                //todo check time format from client app
                 .time(LocalTime.parse(tripData.getTimeOfTrip()))
+                .pricePerSeat(tripData.getPricePerSeat())
                 .duration(tripData.getDuration())
                 .driver(authenticatedUser)
                 .build();

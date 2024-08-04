@@ -31,11 +31,11 @@ public class Trip extends BaseEntity{
     private double duration;
     private double distance;
 
+    @Column(name = "price_per_seat")
+    private double pricePerSeat;
+
     @Column(name = "available_seats")
     private int availableSeats;
-
-    @Enumerated
-    private TripType tripType;
 
     @ManyToOne
     @JoinColumn(name = "driver_id" , referencedColumnName = "id")

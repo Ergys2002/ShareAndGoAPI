@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/api/car/add-car",
                                 "/api/trip/all-trips",
                                 "/api/withdrawal/withdraw",
-                                "/api/recharge"
+                                "/api/recharge",
+                                "api/car/all-cars"
                                 ).hasAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN" , "SUPERADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/car/delete-car").hasAuthority("USER")

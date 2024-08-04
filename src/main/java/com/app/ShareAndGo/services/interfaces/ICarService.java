@@ -8,4 +8,6 @@ public interface ICarService {
     ResponseEntity<?> saveCar(AddCarRequest carData);
 
     ResponseEntity<?> deleteCar(Long carId);
+
+    ResponseEntity<?> getAllCars();
 }

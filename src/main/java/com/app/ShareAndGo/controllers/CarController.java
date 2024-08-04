@@ -4,6 +4,7 @@ import com.app.ShareAndGo.dto.requests.AddCarRequest;
 import com.app.ShareAndGo.services.interfaces.ICarService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +24,10 @@ public class CarController {
     @DeleteMapping("/delete-car")
     public ResponseEntity<?> deleteCar(@RequestParam("id")Long carId){
         return carService.deleteCar(carId);
+    }
+
+    @GetMapping("/all-cars")
+    public ResponseEntity<?> getAllCars(){
+        return carService.getAllCars();
     }
 }

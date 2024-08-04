@@ -20,8 +20,8 @@ public class TripController {
     }
 
     @GetMapping("/all-trips")
-    public ResponseEntity<?> getAllTrips(){
-        return tripService.getAllTrips();
+    public ResponseEntity<?> getAllTrips(@RequestParam("page") int page, @RequestParam("size") int size){
+        return tripService.getAllTrips(page, size);
     }
 
     @GetMapping("/3-latest")

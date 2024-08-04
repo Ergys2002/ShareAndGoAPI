@@ -4,15 +4,17 @@ import com.app.ShareAndGo.dto.requests.TripCreationRequest;
 import com.app.ShareAndGo.dto.responses.TripResponse;
 import com.app.ShareAndGo.entities.Trip;
 import com.app.ShareAndGo.entities.User;
-import com.app.ShareAndGo.enums.TripType;
 import com.app.ShareAndGo.repositories.TripRepository;
-import com.app.ShareAndGo.repositories.UserRepository;
 import com.app.ShareAndGo.services.interfaces.ITripService;
 import com.app.ShareAndGo.services.interfaces.IUserService;
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,9 +89,10 @@ public class TripService implements ITripService {
     }
 
     @Override
-    public ResponseEntity<?> getAllTrips() {
+    public ResponseEntity<?> getAllTrips(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Set<TripResponse> trips = tripRepository.getAll(pageable);
 
-        Set<TripResponse> trips = tripRepository.getAll();
         if(trips == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
         } else{

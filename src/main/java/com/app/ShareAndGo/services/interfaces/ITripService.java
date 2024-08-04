@@ -8,4 +8,6 @@ public interface ITripService {
     ResponseEntity<?> createTrip(TripCreationRequest tripData);
     Trip getLatestTripOfAuthenticatedUser();
     ResponseEntity<?> getAllTrips();
+
+    ResponseEntity<?> get3LatestTrips();
 }

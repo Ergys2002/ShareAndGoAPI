@@ -15,6 +15,9 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     Trip findFirstByDriverOrderByIdDesc(User driver);
     Set<Trip> findAllByDriver(User driver);
 
+    @Query("from Trip t order by t.createdAt desc limit 3")
+    Set<TripResponse> getTop3ByOrderByCreatedAtDesc();
+
     @Query("from Trip t")
     Set<TripResponse> getAll();
 }

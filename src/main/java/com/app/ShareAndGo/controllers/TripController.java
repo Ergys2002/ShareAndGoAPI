@@ -23,4 +23,9 @@ public class TripController {
     public ResponseEntity<?> getAllTrips(){
         return tripService.getAllTrips();
     }
+
+    @GetMapping("/3-latest")
+    public ResponseEntity<?> get3LatestTrips(){
+        return tripService.get3LatestTrips();
+    }
 }

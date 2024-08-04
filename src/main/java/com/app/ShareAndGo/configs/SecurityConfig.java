@@ -41,9 +41,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/user/sign-up","/api/user/login").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/trip/create-trip",
+                                "/api/trip/all-trips",
+                                "/api/trip/3-latest",
                                 "/api/preference/choose-preferences",
                                 "/api/car/add-car",
-                                "/api/trip/all-trips",
                                 "/api/withdrawal/withdraw",
                                 "/api/recharge",
                                 "api/car/all-cars",

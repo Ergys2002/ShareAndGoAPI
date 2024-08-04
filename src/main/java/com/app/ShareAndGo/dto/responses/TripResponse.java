@@ -16,7 +16,6 @@ public interface TripResponse {
     double getDuration();
     double getDistance();
     int getAvailableSeats();
-    TripType getTripType();
 
     @Value("#{target.driver.id}")
     Long getDriverId();

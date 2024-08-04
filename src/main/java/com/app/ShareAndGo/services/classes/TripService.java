@@ -96,4 +96,14 @@ public class TripService implements ITripService {
             return ResponseEntity.status(HttpStatus.OK).body(trips);
         }
     }
+
+    @Override
+    public ResponseEntity<?> get3LatestTrips() {
+        Set<TripResponse> trips = tripRepository.getTop3ByOrderByCreatedAtDesc();
+        if(trips == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
+        } else{
+            return ResponseEntity.status(HttpStatus.OK).body(trips);
+        }
+    }
 }

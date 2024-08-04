@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Repository
@@ -23,4 +24,6 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
 
     @Query("from Trip t")
     Page<TripResponse> getAll(Pageable pageable);
+
+    Page<TripResponse> findAllByStartCityAndEndCityAndDate(String startCity, String endCity, LocalDate date, Pageable pageable);
 }

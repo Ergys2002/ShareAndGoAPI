@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/api/trip/create-trip",
                                 "/api/trip/all-trips",
+                                "/api/trip/filtered-trips",
                                 "/api/trip/3-latest",
                                 "/api/preference/choose-preferences",
                                 "/api/car/add-car",

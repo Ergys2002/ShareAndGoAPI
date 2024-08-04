@@ -24,6 +24,18 @@ public class TripController {
         return tripService.getAllTrips(page, size);
     }
 
+    @GetMapping("/filtered-trips")
+    public ResponseEntity<?> getFilteredTrips(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("startCity") String startCity,
+            @RequestParam("endCity") String endCity,
+            @RequestParam("date") String date
+    ){
+        return tripService.getFilteredTrips(page, size, startCity, endCity, date);
+    }
+
+
     @GetMapping("/3-latest")
     public ResponseEntity<?> get3LatestTrips(){
         return tripService.get3LatestTrips();

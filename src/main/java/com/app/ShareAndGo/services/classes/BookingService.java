@@ -35,7 +35,7 @@ public class BookingService implements IBookingService {
         }
         trip.setAvailableSeats(trip.getAvailableSeats() - tripApplication.getNumberOfSeats());
         tripRepository.save(trip);
-
+        //todo continue here
 
         return null;
     }

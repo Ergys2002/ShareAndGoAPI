@@ -10,4 +10,6 @@ public interface ITripService {
     ResponseEntity<?> getAllTrips(int page, int size);
 
     ResponseEntity<?> get3LatestTrips();
+
+    ResponseEntity<?> getFilteredTrips(int page, int size, String startCity, String endCity, String date);
 }

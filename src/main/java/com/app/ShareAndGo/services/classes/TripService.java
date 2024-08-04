@@ -110,4 +110,16 @@ public class TripService implements ITripService {
             return ResponseEntity.status(HttpStatus.OK).body(trips);
         }
     }
+
+    @Override
+    public ResponseEntity<?> getFilteredTrips(int page, int size, String startCity, String endCity, String date) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<TripResponse> filteredTrips = tripRepository.findAllByStartCityAndEndCityAndDate(startCity, endCity, LocalDate.parse(date), pageable).stream().toList();
+
+        if(filteredTrips == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
+        } else{
+            return ResponseEntity.status(HttpStatus.OK).body(filteredTrips);
+        }
+    }
 }

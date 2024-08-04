@@ -1,9 +1,6 @@
 package com.app.ShareAndGo.entities.logs;
 
-
-import com.app.ShareAndGo.entities.BaseEntity;
-import com.app.ShareAndGo.entities.Booking;
-import com.app.ShareAndGo.entities.WithdrawalRequest;
+import com.app.ShareAndGo.entities.Withdrawal;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -19,6 +16,6 @@ import lombok.*;
 @Entity
 public class WithdrawalLog extends Log {
     @ManyToOne
-    @JoinColumn(name = "withdrawal_request_id", referencedColumnName = "id")
-    private WithdrawalRequest withdrawalRequest;
+    @JoinColumn(name = "withdrawal_id", referencedColumnName = "id")
+    private Withdrawal withdrawal;
 }

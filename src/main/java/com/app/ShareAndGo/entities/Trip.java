@@ -3,6 +3,7 @@ package com.app.ShareAndGo.entities;
 import com.app.ShareAndGo.entities.logs.BookingLog;
 import com.app.ShareAndGo.entities.logs.TripLog;
 import com.app.ShareAndGo.enums.TripType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 

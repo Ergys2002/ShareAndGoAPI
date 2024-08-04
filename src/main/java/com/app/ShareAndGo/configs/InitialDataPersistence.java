@@ -19,7 +19,7 @@ public class InitialDataPersistence implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
- //      saveAdmin();
+//       saveAdmin();
     }
 
     private void saveAdmin(){

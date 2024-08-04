@@ -7,4 +7,5 @@ import org.springframework.http.ResponseEntity;
 public interface ITripService {
     ResponseEntity<?> createTrip(TripCreationRequest tripData);
     Trip getLatestTripOfAuthenticatedUser();
+    ResponseEntity<?> getAllTrips();
 }

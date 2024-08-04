@@ -1,7 +1,6 @@
 package com.app.ShareAndGo.entities;
 
 
-import com.app.ShareAndGo.entities.logs.BookingLog;
 import com.app.ShareAndGo.entities.logs.WithdrawalLog;
 import com.app.ShareAndGo.enums.WithdrawalStatus;
 import jakarta.persistence.*;
@@ -15,8 +14,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "withdrawal_request")
-public class WithdrawalRequest extends BaseEntity{
+@Table(name = "withdrawal")
+public class Withdrawal extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id" , referencedColumnName = "id")
     private User user;
@@ -25,8 +24,11 @@ public class WithdrawalRequest extends BaseEntity{
     @Column(name = "withdrawal_status")
     private WithdrawalStatus withdrawalStatus;
 
+    @Column(name = "account_number")
+    private String accountNumber;
+
     private double amount;
 
-    @OneToMany(mappedBy = "withdrawalRequest")
+    @OneToMany(mappedBy = "withdrawal")
     private Set<WithdrawalLog> withdrawalLogs;
 }

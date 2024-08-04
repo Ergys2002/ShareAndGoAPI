@@ -1,6 +1,7 @@
 package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.TripCreationRequest;
+import com.app.ShareAndGo.dto.responses.TripResponse;
 import com.app.ShareAndGo.entities.Trip;
 import com.app.ShareAndGo.entities.User;
 import com.app.ShareAndGo.enums.TripType;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -74,5 +76,16 @@ public class TripService implements ITripService {
     }
     public Trip getLatestTripOfAuthenticatedUser(){
         return tripRepository.findFirstByDriverOrderByIdDesc(userService.getAuthenticatedUser());
+    }
+
+    @Override
+    public ResponseEntity<?> getAllTrips() {
+
+        Set<TripResponse> trips = tripRepository.getAll();
+        if(trips == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
+        } else{
+            return ResponseEntity.status(HttpStatus.OK).body(trips);
+        }
     }
 }

@@ -39,8 +39,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sup-admin/create-admin").hasAuthority("SUPERADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/user/sign-up","/api/user/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/trip/create-trip","/api/preference/choose-preferences", "/api/car/add-car").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/trip/create-trip",
+                                "/api/preference/choose-preferences",
+                                "/api/car/add-car",
+                                "/api/trip/all-trips",
+                                "/api/withdrawal/withdraw",
+                                "/api/recharge"
+                                ).hasAuthority("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN" , "SUPERADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/car/delete-car").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/withdrawal/admin/confirm-withdrawal", "/api/withdrawal/admin/reject-withdrawal").hasAnyAuthority("ADMIN" , "SUPERADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

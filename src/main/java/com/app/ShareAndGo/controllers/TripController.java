@@ -5,10 +5,7 @@ import com.app.ShareAndGo.dto.requests.TripCreationRequest;
 import com.app.ShareAndGo.services.interfaces.ITripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/trip")
@@ -20,5 +17,10 @@ public class TripController {
     @PostMapping("/create-trip")
     public ResponseEntity<?> createTrip(@RequestBody TripCreationRequest tripData){
         return tripService.createTrip(tripData);
+    }
+
+    @GetMapping("/all-trips")
+    public ResponseEntity<?> getAllTrips(){
+        return tripService.getAllTrips();
     }
 }

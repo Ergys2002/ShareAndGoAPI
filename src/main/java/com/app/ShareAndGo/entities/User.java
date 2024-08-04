@@ -60,6 +60,8 @@ public class User extends BaseEntity implements UserDetails{
     @OneToMany(mappedBy = "driver")
     private Set<Trip> tripsAsDriver;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Recharge> recharges;
 
     @OneToMany(mappedBy = "applicant")
     private Set<TripApplication> tripApplications;

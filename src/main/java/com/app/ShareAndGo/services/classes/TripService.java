@@ -9,6 +9,7 @@ import com.app.ShareAndGo.services.interfaces.ITripService;
 import com.app.ShareAndGo.services.interfaces.IUserService;
 import lombok.AllArgsConstructor;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -91,7 +92,7 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getAllTrips(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Set<TripResponse> trips = tripRepository.getAll(pageable);
+        List<TripResponse> trips = tripRepository.getAll(pageable).stream().toList();
 
         if(trips == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");

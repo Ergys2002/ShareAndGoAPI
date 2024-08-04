@@ -4,6 +4,7 @@ import com.app.ShareAndGo.dto.responses.TripResponse;
 import com.app.ShareAndGo.entities.Trip;
 import com.app.ShareAndGo.entities.TripApplication;
 import com.app.ShareAndGo.entities.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,5 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     Set<TripResponse> getTop3ByOrderByCreatedAtDesc();
 
     @Query("from Trip t")
-    Set<TripResponse> getAll(Pageable pageable);
+    Page<TripResponse> getAll(Pageable pageable);
 }

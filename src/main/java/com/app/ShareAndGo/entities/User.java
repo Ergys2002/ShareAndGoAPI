@@ -69,6 +69,9 @@ public class User extends BaseEntity implements UserDetails{
     @OneToMany(mappedBy = "sender")
     private Set<Package> packages;
 
+    @OneToMany(mappedBy = "passenger")
+    private Set<Booking> bookings;
+
     @OneToMany(mappedBy = "owner")
     private Set<Car> cars;
 

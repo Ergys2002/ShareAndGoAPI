@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,11 @@ public class TripApplicationService  implements ITripApplicationService {
     public ResponseEntity<?> applyForTripReservation(TripApplicationRequest tripApplicationRequest) {
         Trip trip = tripService.getTripById(tripApplicationRequest.getTripId());
         User authenticatedUser = userService.getAuthenticatedUser();
+
+        if (Objects.equals(trip.getDriver().getId(), authenticatedUser.getId())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Ju nuk mund te rezervoni ne udhetimin tuaj");
+        }
+
         if(trip == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi per te cilin doni te aplikoni nuk ekziston");
         }

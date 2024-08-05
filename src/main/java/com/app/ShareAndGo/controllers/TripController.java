@@ -19,6 +19,11 @@ public class TripController {
         return tripService.createTrip(tripData);
     }
 
+    @PutMapping("/cancel-trip")
+    public ResponseEntity<?> cancelTrip(@RequestParam("id") Long tripId){
+        return tripService.cancelTrip(tripId);
+    }
+
     @GetMapping("/all-trips")
     public ResponseEntity<?> getAllTrips(@RequestParam("page") int page, @RequestParam("size") int size){
         return tripService.getAllTrips(page, size);
@@ -39,5 +44,10 @@ public class TripController {
     @GetMapping("/3-latest")
     public ResponseEntity<?> get3LatestTrips(){
         return tripService.get3LatestTrips();
+    }
+
+    @PutMapping("/pay-for-trip")
+    public ResponseEntity<?> payForTrip(@RequestParam("id") Long id){
+        return tripService.payForTrip(id);
     }
 }

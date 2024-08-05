@@ -2,9 +2,15 @@ package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.TripCreationRequest;
 import com.app.ShareAndGo.dto.responses.TripResponse;
+import com.app.ShareAndGo.entities.Booking;
 import com.app.ShareAndGo.entities.Trip;
 import com.app.ShareAndGo.entities.User;
+import com.app.ShareAndGo.enums.BookingStatus;
+import com.app.ShareAndGo.enums.TripStatus;
+import com.app.ShareAndGo.repositories.BookingRepository;
 import com.app.ShareAndGo.repositories.TripRepository;
+import com.app.ShareAndGo.repositories.UserRepository;
+import com.app.ShareAndGo.services.interfaces.ITransactionService;
 import com.app.ShareAndGo.services.interfaces.ITripService;
 import com.app.ShareAndGo.services.interfaces.IUserService;
 import lombok.AllArgsConstructor;
@@ -14,7 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
@@ -29,6 +37,9 @@ public class TripService implements ITripService {
 
     private final IUserService userService;
     private final TripRepository tripRepository;
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final ITransactionService transactionService;
     @Override
     public ResponseEntity<?> createTrip(TripCreationRequest tripData) {
         User authenticatedUser = userService.getAuthenticatedUser();
@@ -121,5 +132,67 @@ public class TripService implements ITripService {
         } else{
             return ResponseEntity.status(HttpStatus.OK).body(filteredTrips);
         }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> cancelTrip(Long tripId) {
+        Trip tripToBeCanceled = tripRepository.findById(tripId).orElse(null);
+        User authenticatedUser = userService.getAuthenticatedUser();
+        System.out.println(authenticatedUser.getId());
+
+        if (tripToBeCanceled == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi qe doni te anuloni nuk ekziston");
+        }
+
+        if(!tripToBeCanceled.getDriver().getId().equals(authenticatedUser.getId())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Ju nuk mund te anuloni udhetimin e dikujt tjeter");
+        }
+
+        LocalDateTime tripStartTime = LocalDateTime.of(tripToBeCanceled.getDate(), tripToBeCanceled.getTime());
+
+        if (LocalDateTime.now().plusHours(2).isAfter(tripStartTime)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Udhetimi nuk mund te anulohet");
+        }
+
+        Set<Booking> bookings = tripToBeCanceled.getBookings();
+        if (!bookings.isEmpty()){
+            bookings.forEach(booking -> booking.setBookingStatus(BookingStatus.TRIP_CANCELED));
+            bookingRepository.saveAll(bookings);
+        }
+
+        tripToBeCanceled.setTripStatus(TripStatus.CANCELED);
+        tripRepository.save(tripToBeCanceled);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Udhetimi juaj u anulua");
+    }
+
+    @Override
+    public ResponseEntity<?> payForTrip(Long id) {
+        User authenticatedUser = userService.getAuthenticatedUser();
+        Trip activeTripOfAuthenticatedUser = tripRepository.findById(id).orElse(null);
+        Booking bookingOfUser = bookingRepository.findBookingByPassengerAndTrip(authenticatedUser, activeTripOfAuthenticatedUser);
+
+        if (activeTripOfAuthenticatedUser == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi qe doni te paguani nuk ekziston");
+        }
+
+        double totalPrice = bookingOfUser.getReservedSeats() * activeTripOfAuthenticatedUser.getPricePerSeat();
+
+        return transactionService.createTransaction(authenticatedUser, activeTripOfAuthenticatedUser, totalPrice );
+    }
+
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void startScheduledTrips(){
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now().withSecond(0).withNano(0);
+        List<Trip> tripsToStart = tripRepository.findByTripStatusAndDateAndTime(TripStatus.CREATED, date, time);
+
+        for (Trip trip : tripsToStart) {
+            trip.setTripStatus(TripStatus.STARTED);
+            tripRepository.save(trip);
+        }
+
     }
 }

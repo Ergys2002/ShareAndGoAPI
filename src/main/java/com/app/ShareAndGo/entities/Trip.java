@@ -2,6 +2,7 @@ package com.app.ShareAndGo.entities;
 
 import com.app.ShareAndGo.entities.logs.BookingLog;
 import com.app.ShareAndGo.entities.logs.TripLog;
+import com.app.ShareAndGo.enums.TripStatus;
 import com.app.ShareAndGo.enums.TripType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -30,6 +31,10 @@ public class Trip extends BaseEntity{
     private LocalTime time;
     private double duration;
     private double distance;
+
+    @Column(name = "trip_status")
+    @Enumerated(EnumType.STRING)
+    private TripStatus tripStatus;
 
     @Column(name = "price_per_seat")
     private double pricePerSeat;

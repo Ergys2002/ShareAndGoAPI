@@ -12,4 +12,8 @@ public interface ITripService {
     ResponseEntity<?> get3LatestTrips();
 
     ResponseEntity<?> getFilteredTrips(int page, int size, String startCity, String endCity, String date);
+
+    ResponseEntity<?> cancelTrip(Long tripId);
+
+    ResponseEntity<?> payForTrip(Long id);
 }

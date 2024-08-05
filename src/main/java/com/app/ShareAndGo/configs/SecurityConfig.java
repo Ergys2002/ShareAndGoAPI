@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN" , "SUPERADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/car/delete-car").hasAuthority("USER")
                         .requestMatchers(HttpMethod.PUT, "/api/withdrawal/admin/confirm-withdrawal", "/api/withdrawal/admin/reject-withdrawal").hasAnyAuthority("ADMIN" , "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/booking/reject-application", "/api/booking/confirm-application", "/api/trip/cancel-trip").hasAnyAuthority("USER")
 
                         .anyRequest().authenticated()
                 )

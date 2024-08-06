@@ -49,6 +49,10 @@ public class Trip extends BaseEntity{
     @JoinColumn(name = "driver_id" , referencedColumnName = "id")
     private User driver;
 
+    @ManyToOne
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
+
     @OneToMany(mappedBy = "trip")
     private Set<TripApplication> tripApplications;
 

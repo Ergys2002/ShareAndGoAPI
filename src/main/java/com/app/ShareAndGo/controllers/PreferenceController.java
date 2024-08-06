@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/preference")
 @RequiredArgsConstructor
 public class PreferenceController {
 
     private final IPreferenceService preferenceService;
 
-    @PostMapping("/preference/choose-preferences")
+    @PostMapping("/choose-preferences")
     public ResponseEntity<?> chosePreferences(@RequestBody List<PreferenceRequest> chosenPreferences){
         return preferenceService.handleChosenPreferences(chosenPreferences);
+    }
+
+    @GetMapping("/preferences-by-trip-id")
+    public ResponseEntity<?> getPreferencesByTripId(@RequestParam("id") Long id){
+        return preferenceService.getPreferencesByTripId(id);
     }
 }

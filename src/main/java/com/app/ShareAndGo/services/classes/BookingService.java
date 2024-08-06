@@ -49,7 +49,7 @@ public class BookingService implements IBookingService {
 
         Set<TripApplication> pendingApplicationsOfTrip = tripApplicationRepository.findTripApplicationsByTripAndStatus(trip, ApplicationStatus.PENDING);
         pendingApplicationsOfTrip.forEach(application -> {
-            if (application.getNumberOfSeats() > trip.getAvailableSeats()){
+            if (application.getNumberOfSeats() > trip.getAvailableSeats() || trip.getAvailableSeats() == 0){
                 application.setStatus(ApplicationStatus.REJECTED);
             }
         });

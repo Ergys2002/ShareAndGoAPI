@@ -2,14 +2,11 @@ package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.TripCreationRequest;
 import com.app.ShareAndGo.dto.responses.TripResponse;
-import com.app.ShareAndGo.entities.Booking;
-import com.app.ShareAndGo.entities.Trip;
-import com.app.ShareAndGo.entities.User;
+import com.app.ShareAndGo.entities.*;
+import com.app.ShareAndGo.enums.ApplicationStatus;
 import com.app.ShareAndGo.enums.BookingStatus;
 import com.app.ShareAndGo.enums.TripStatus;
-import com.app.ShareAndGo.repositories.BookingRepository;
-import com.app.ShareAndGo.repositories.TripRepository;
-import com.app.ShareAndGo.repositories.UserRepository;
+import com.app.ShareAndGo.repositories.*;
 import com.app.ShareAndGo.services.interfaces.ITransactionService;
 import com.app.ShareAndGo.services.interfaces.ITripService;
 import com.app.ShareAndGo.services.interfaces.IUserService;
@@ -30,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -40,10 +38,17 @@ public class TripService implements ITripService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ITransactionService transactionService;
+    private final TripApplicationRepository tripApplicationRepository;
+    private final CarRepository carRepository;
+
     @Override
     public ResponseEntity<?> createTrip(TripCreationRequest tripData) {
         User authenticatedUser = userService.getAuthenticatedUser();
         Set<Trip> tripsOfAuthenticatedDriver = tripRepository.findAllByDriver(authenticatedUser);
+        Car car = carRepository.findById(tripData.getCarId()).orElse(null);
+        if (car == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Makina nuk ekziston");
+        }
 
         Trip newTrip = Trip.builder()
                 .startCity(tripData.getStartCity())
@@ -56,13 +61,14 @@ public class TripService implements ITripService {
                 .pricePerSeat(tripData.getPricePerSeat())
                 .duration(tripData.getDuration())
                 .driver(authenticatedUser)
+                .car(car)
                 .build();
 
         boolean hasInterferingTrips = tripsOfAuthenticatedDriver.stream().anyMatch(trip -> checkOverlap(trip, newTrip));
 
-        if(LocalDateTime.parse(tripData.getDateOfTrip() + "T" + tripData.getTimeOfTrip()).isBefore(LocalDateTime.now())){
+        if (LocalDateTime.parse(tripData.getDateOfTrip() + "T" + tripData.getTimeOfTrip()).isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Koha e udhetimit tuaj nuk mund te jete ne te shkuaren");
-        }else {
+        } else {
             if (hasInterferingTrips) {
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
@@ -76,27 +82,37 @@ public class TripService implements ITripService {
         }
     }
 
-    private boolean checkOverlap(Trip existingTrip, Trip newTrip){
+    private boolean checkOverlap(Trip existingTrip, Trip newTrip) {
         LocalTime startTimeOfExistingTrip = existingTrip.getTime();
         LocalTime startTimeOfNewTrip = newTrip.getTime();
         LocalTime endTimeOfExistingTrip = existingTrip.getTime().plusMinutes((long) existingTrip.getDuration() * 60);
         LocalTime endTimeOfNewTrip = newTrip.getTime().plusMinutes((long) newTrip.getDuration() * 60);
 
-        if(!existingTrip.getDate().isEqual(newTrip.getDate())){
+        if (!existingTrip.getDate().isEqual(newTrip.getDate())) {
             return false;
-        }else {
+        } else {
             return startTimeOfNewTrip.isBefore(endTimeOfExistingTrip) && endTimeOfNewTrip.isAfter(startTimeOfExistingTrip);
         }
     }
-    public Trip getLatestTripOfAuthenticatedUser(){
+
+    public Trip getLatestTripOfAuthenticatedUser() {
         return tripRepository.findFirstByDriverOrderByIdDesc(userService.getAuthenticatedUser());
     }
 
-    public Trip getTripById(Long id){
+    public Trip getById(Long id) {
         return tripRepository.findById(id).orElse(null);
     }
 
-    public Trip saveTrip(Trip trip){
+    @Override
+    public ResponseEntity<?> getTripById(Long id) {
+        TripResponse tripResponse = tripRepository.getTripById(id);
+        if (tripResponse == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi nuk ekziston");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(tripResponse);
+    }
+
+    public Trip saveTrip(Trip trip) {
         return tripRepository.save(trip);
     }
 
@@ -105,9 +121,9 @@ public class TripService implements ITripService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<TripResponse> trips = tripRepository.getAll(pageable).stream().toList();
 
-        if(trips == null){
+        if (trips == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
-        } else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body(trips);
         }
     }
@@ -115,9 +131,9 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> get3LatestTrips() {
         Set<TripResponse> trips = tripRepository.getTop3ByOrderByCreatedAtDesc();
-        if(trips == null){
+        if (trips == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
-        } else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body(trips);
         }
     }
@@ -127,9 +143,9 @@ public class TripService implements ITripService {
         Pageable pageable = PageRequest.of(page, size);
         List<TripResponse> filteredTrips = tripRepository.findAllByStartCityAndEndCityAndDate(startCity, endCity, LocalDate.parse(date), pageable).stream().toList();
 
-        if(filteredTrips == null){
+        if (filteredTrips == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
-        } else{
+        } else {
             return ResponseEntity.status(HttpStatus.OK).body(filteredTrips);
         }
     }
@@ -141,22 +157,22 @@ public class TripService implements ITripService {
         User authenticatedUser = userService.getAuthenticatedUser();
         System.out.println(authenticatedUser.getId());
 
-        if (tripToBeCanceled == null){
+        if (tripToBeCanceled == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi qe doni te anuloni nuk ekziston");
         }
 
-        if(!tripToBeCanceled.getDriver().getId().equals(authenticatedUser.getId())){
+        if (!tripToBeCanceled.getDriver().getId().equals(authenticatedUser.getId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Ju nuk mund te anuloni udhetimin e dikujt tjeter");
         }
 
         LocalDateTime tripStartTime = LocalDateTime.of(tripToBeCanceled.getDate(), tripToBeCanceled.getTime());
 
-        if (LocalDateTime.now().plusHours(2).isAfter(tripStartTime)){
+        if (LocalDateTime.now().plusHours(2).isAfter(tripStartTime)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Udhetimi nuk mund te anulohet");
         }
 
         Set<Booking> bookings = tripToBeCanceled.getBookings();
-        if (!bookings.isEmpty()){
+        if (!bookings.isEmpty()) {
             bookings.forEach(booking -> booking.setBookingStatus(BookingStatus.TRIP_CANCELED));
             bookingRepository.saveAll(bookings);
         }
@@ -173,23 +189,26 @@ public class TripService implements ITripService {
         Trip activeTripOfAuthenticatedUser = tripRepository.findById(id).orElse(null);
         Booking bookingOfUser = bookingRepository.findBookingByPassengerAndTrip(authenticatedUser, activeTripOfAuthenticatedUser);
 
-        if (activeTripOfAuthenticatedUser == null){
+        if (activeTripOfAuthenticatedUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi qe doni te paguani nuk ekziston");
         }
 
         double totalPrice = bookingOfUser.getReservedSeats() * activeTripOfAuthenticatedUser.getPricePerSeat();
 
-        return transactionService.createTransaction(authenticatedUser, activeTripOfAuthenticatedUser, totalPrice );
+        return transactionService.createTransaction(authenticatedUser, activeTripOfAuthenticatedUser, totalPrice);
     }
 
     @Scheduled(fixedRate = 60000)
     @Transactional
-    public void startScheduledTrips(){
+    public void startScheduledTrips() {
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now().withSecond(0).withNano(0);
         List<Trip> tripsToStart = tripRepository.findByTripStatusAndDateAndTime(TripStatus.CREATED, date, time);
 
         for (Trip trip : tripsToStart) {
+            Set<TripApplication> pendingApplications = trip.getTripApplications().stream().filter(tripApplication -> tripApplication.getStatus().equals(ApplicationStatus.PENDING)).collect(Collectors.toSet());
+            pendingApplications.forEach(pendingApplication -> pendingApplication.setStatus(ApplicationStatus.REJECTED));
+            tripApplicationRepository.saveAll(pendingApplications);
             trip.setTripStatus(TripStatus.STARTED);
             tripRepository.save(trip);
         }

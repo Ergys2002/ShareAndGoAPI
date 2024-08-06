@@ -26,7 +26,6 @@ public class PreferenceService implements IPreferenceService {
 
     private final PreferenceRepository preferenceRepository;
     private final ITripService tripService;
-    private final TripRepository tripRepository;
     private final TripPreferenceRepository tripPreferenceRepository;
     @Override
     public ResponseEntity<?> handleChosenPreferences(List<PreferenceRequest> preferences) {
@@ -75,5 +74,16 @@ public class PreferenceService implements IPreferenceService {
         }
 
         return ResponseEntity.ok("Preferencat per udhetimin tuaj u ruajten me sukses");
+    }
+
+    @Override
+    public ResponseEntity<?> getPreferencesByTripId(Long id) {
+        Trip trip = tripService.getById(id);
+        Set<Preference> preferences = trip.getTripPreferences().stream().map(TripPreference::getPreference).collect(Collectors.toSet());
+
+        if (preferences.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekzistojne preferenca per kete udhetim");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(preferences);
     }
 }

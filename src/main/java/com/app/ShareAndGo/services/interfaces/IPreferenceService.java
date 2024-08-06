@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface IPreferenceService {
     ResponseEntity<?> handleChosenPreferences(List<PreferenceRequest> preferences);
+
+    ResponseEntity<?> getPreferencesByTripId(Long id);
 }

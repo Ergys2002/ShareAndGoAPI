@@ -16,4 +16,8 @@ public interface ITripService {
     ResponseEntity<?> cancelTrip(Long tripId);
 
     ResponseEntity<?> payForTrip(Long id);
+
+    Trip getById(Long id);
+
+    ResponseEntity<?> getTripById(Long id);
 }

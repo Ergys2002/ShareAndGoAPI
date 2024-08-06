@@ -18,4 +18,5 @@ public class TripCreationRequest {
     private int passengerCount;
     private double duration;
     private double distance;
+    private Long carId;
 }

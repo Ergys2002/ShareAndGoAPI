@@ -30,6 +30,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     Page<TripResponse> getAll(Pageable pageable);
 
     Page<TripResponse> findAllByStartCityAndEndCityAndDate(String startCity, String endCity, LocalDate date, Pageable pageable);
+    TripResponse getTripById(Long id);
 
     List<Trip> findByTripStatusAndDateAndTime(TripStatus tripStatus, LocalDate date, LocalTime time);
 

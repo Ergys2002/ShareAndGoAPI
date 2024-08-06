@@ -28,4 +28,7 @@ public interface TripResponse {
 
     @Value("#{target.driver.profile.profilePictureUrl}")
     String getDriverProfilePictureURL();
+
+    @Value("#{target.car.id}")
+    Long getCarId();
 }

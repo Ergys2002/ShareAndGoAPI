@@ -50,4 +50,9 @@ public class TripController {
     public ResponseEntity<?> payForTrip(@RequestParam("id") Long id){
         return tripService.payForTrip(id);
     }
+
+    @GetMapping("/trip-by-id")
+    public ResponseEntity<?> getTripById(@RequestParam("id") Long id){
+        return tripService.getTripById(id);
+    }
 }

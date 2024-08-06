@@ -13,7 +13,7 @@ public class ShareAndGoApplication {
 		SpringApplication.run(ShareAndGoApplication.class, args);
 	}
 
-	/*todo manage pending applications for starting trips and also when seats become full reject all pending applications
+	/*todo
 	*  test implementation for method payForTrip */
 
 

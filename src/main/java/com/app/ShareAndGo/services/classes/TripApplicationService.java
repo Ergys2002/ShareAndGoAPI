@@ -33,7 +33,7 @@ public class TripApplicationService  implements ITripApplicationService {
     @Override
     @Transactional
     public ResponseEntity<?> applyForTripReservation(TripApplicationRequest tripApplicationRequest) {
-        Trip trip = tripService.getTripById(tripApplicationRequest.getTripId());
+        Trip trip = tripService.getById(tripApplicationRequest.getTripId());
         User authenticatedUser = userService.getAuthenticatedUser();
 
         if (Objects.equals(trip.getDriver().getId(), authenticatedUser.getId())){

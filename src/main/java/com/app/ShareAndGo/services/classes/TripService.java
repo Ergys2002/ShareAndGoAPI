@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -112,6 +113,128 @@ public class TripService implements ITripService {
         return ResponseEntity.status(HttpStatus.OK).body(tripResponse);
     }
 
+    @Override
+    public ResponseEntity<?> getTripsAsDriver() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+        Set<TripResponse> tripResponses = tripRepository.getTripsByDriverAndTripStatus(authenticatedUser , TripStatus.FINISHED);
+
+        if (tripResponses.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si shofer");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(tripResponses);
+    }
+
+    @Override
+    public ResponseEntity<?> getTripsAsPassenger() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        Set<Trip> allTrips = tripRepository.findAllByTripStatus(TripStatus.FINISHED);
+
+        Set<Trip> tripsAsPassenger = allTrips.stream()
+                .filter(trip ->
+                        trip.getBookings().stream().anyMatch(booking ->
+                                Objects.equals(booking.getPassenger().getId(), authenticatedUser.getId())))
+                .collect(Collectors.toSet());
+
+        if (tripsAsPassenger.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si pasagjer");
+        }
+
+        Set<TripResponse> tripResponses = tripsAsPassenger.stream().map(trip -> new TripResponse() {
+            @Override
+            public Long getId() {
+                return trip.getId();
+            }
+
+            @Override
+            public String getStartCity() {
+                return trip.getStartCity();
+            }
+
+            @Override
+            public String getEndCity() {
+                return trip.getEndCity();
+            }
+
+            @Override
+            public LocalDate getDate() {
+                return trip.getDate();
+            }
+
+            @Override
+            public LocalTime getTime() {
+                return trip.getTime();
+            }
+
+            @Override
+            public double getPricePerSeat() {
+                return trip.getPricePerSeat();
+            }
+
+            @Override
+            public double getDuration() {
+                return trip.getDuration();
+            }
+
+            @Override
+            public double getDistance() {
+                return trip.getDistance();
+            }
+
+            @Override
+            public int getAvailableSeats() {
+                return trip.getAvailableSeats();
+            }
+
+            @Override
+            public int getTotalSeats() {
+                return trip.getTotalSeats();
+            }
+
+            @Override
+            public Long getDriverId() {
+                return trip.getDriver().getId();
+            }
+
+            @Override
+            public String getDriverFirstname() {
+                return trip.getDriver().getProfile().getFirstname();
+            }
+
+            @Override
+            public String getDriverLastname() {
+                return trip.getDriver().getProfile().getLastname();
+            }
+
+            @Override
+            public String getDriverProfilePictureURL() {
+                return trip.getDriver().getProfile().getProfilePictureUrl();
+            }
+
+            @Override
+            public Long getCarId() {
+                return trip.getCar().getId();
+            }
+        }).collect(Collectors.toSet());
+        return ResponseEntity.status(HttpStatus.OK).body(tripResponses);
+    }
+
+    @Override
+    public ResponseEntity<?> endActiveTripOfAuthenticatedUser() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        Trip activeTripOfAuthenticatedUser = tripRepository.getTripByDriverAndTripStatus(authenticatedUser, TripStatus.STARTED);
+
+        if (activeTripOfAuthenticatedUser == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ju nuk keni nje udhetim aktiv");
+        }
+
+        double totalEarned = activeTripOfAuthenticatedUser.getPricePerSeat() * (activeTripOfAuthenticatedUser.getTotalSeats() - activeTripOfAuthenticatedUser.getAvailableSeats());
+        activeTripOfAuthenticatedUser.setTripStatus(TripStatus.FINISHED);
+        tripRepository.save(activeTripOfAuthenticatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body("Ju fituat " + totalEarned + "ALL nga ky udhetim");
+    }
+
     public Trip saveTrip(Trip trip) {
         return tripRepository.save(trip);
     }
@@ -119,9 +242,9 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getAllTrips(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<TripResponse> trips = tripRepository.getAll(pageable).stream().toList();
+        List<TripResponse> trips = tripRepository.findAllByTripStatus(pageable , TripStatus.CREATED ).stream().toList();
 
-        if (trips == null) {
+        if (trips.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(trips);
@@ -141,7 +264,7 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getFilteredTrips(int page, int size, String startCity, String endCity, String date) {
         Pageable pageable = PageRequest.of(page, size);
-        List<TripResponse> filteredTrips = tripRepository.findAllByStartCityAndEndCityAndDate(startCity, endCity, LocalDate.parse(date), pageable).stream().toList();
+        List<TripResponse> filteredTrips = tripRepository.findAllByStartCityAndEndCityAndDateAndTripStatus(startCity, endCity, LocalDate.parse(date), pageable ,TripStatus.CREATED).stream().toList();
 
         if (filteredTrips == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");

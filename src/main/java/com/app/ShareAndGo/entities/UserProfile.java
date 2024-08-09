@@ -1,5 +1,6 @@
 package com.app.ShareAndGo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
@@ -33,5 +34,6 @@ public class UserProfile extends BaseEntity{
     private int packagesDelivered;
 
     @OneToOne(mappedBy = "profile")
+    @JsonIgnore
     private User user;
 }

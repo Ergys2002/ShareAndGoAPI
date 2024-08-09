@@ -1,17 +1,16 @@
 package com.app.ShareAndGo.controllers;
 
-import com.app.ShareAndGo.dto.requests.AdminCreationRequest;
-import com.app.ShareAndGo.dto.requests.AdminLoginRequest;
-import com.app.ShareAndGo.dto.requests.UserLoginRequest;
-import com.app.ShareAndGo.dto.requests.UserSignUpRequest;
+import com.app.ShareAndGo.dto.requests.*;
 import com.app.ShareAndGo.services.interfaces.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
@@ -39,4 +38,16 @@ public class UserController {
     public ResponseEntity<?> userLogin(@Valid @RequestBody UserLoginRequest userLoginRequest){
         return userService.login(userLoginRequest);
     }
+
+    @GetMapping("/user/auth-user")
+    public ResponseEntity<?> getAuthenticatedUser(){
+        return userService.getAuthenticatedUserResponse();
+    }
+
+    @PutMapping(value = "/user/update-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> updateUserProfile(@ModelAttribute ProfileUpdateRequest profileUpdateRequest){
+        return userService.updateUserData(profileUpdateRequest);
+    }
+
+
 }

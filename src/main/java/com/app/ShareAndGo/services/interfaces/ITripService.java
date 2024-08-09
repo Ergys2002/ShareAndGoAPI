@@ -20,4 +20,10 @@ public interface ITripService {
     Trip getById(Long id);
 
     ResponseEntity<?> getTripById(Long id);
+
+    ResponseEntity<?> getTripsAsDriver();
+
+    ResponseEntity<?> getTripsAsPassenger();
+
+    ResponseEntity<?> endActiveTripOfAuthenticatedUser();
 }

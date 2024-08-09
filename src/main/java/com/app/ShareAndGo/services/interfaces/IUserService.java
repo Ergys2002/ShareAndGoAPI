@@ -1,9 +1,7 @@
 package com.app.ShareAndGo.services.interfaces;
 
-import com.app.ShareAndGo.dto.requests.AdminCreationRequest;
-import com.app.ShareAndGo.dto.requests.AdminLoginRequest;
-import com.app.ShareAndGo.dto.requests.UserLoginRequest;
-import com.app.ShareAndGo.dto.requests.UserSignUpRequest;
+import com.app.ShareAndGo.dto.requests.*;
+import com.app.ShareAndGo.dto.responses.UserResponse;
 import com.app.ShareAndGo.entities.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,4 +15,8 @@ public interface IUserService {
      ResponseEntity<?> login(UserLoginRequest userLoginRequest);
 
      User getAuthenticatedUser();
+
+     ResponseEntity<?> getAuthenticatedUserResponse();
+
+     ResponseEntity<?> updateUserData(ProfileUpdateRequest profileUpdateRequest);
 }

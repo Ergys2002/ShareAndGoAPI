@@ -8,4 +8,6 @@ import java.nio.file.Path;
 
 public interface IImageService {
     String saveImage(File path, MultipartFile profileImage, String imageName) throws IOException;
+
+    String deleteImage(String imagePath);
 }

@@ -26,12 +26,17 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
     @Query("from Trip t order by t.createdAt desc limit 3")
     Set<TripResponse> getTop3ByOrderByCreatedAtDesc();
 
-    @Query("from Trip t")
-    Page<TripResponse> getAll(Pageable pageable);
+    Page<TripResponse> findAllByTripStatus(Pageable pageable, TripStatus tripStatus);
 
-    Page<TripResponse> findAllByStartCityAndEndCityAndDate(String startCity, String endCity, LocalDate date, Pageable pageable);
+    Page<TripResponse> findAllByStartCityAndEndCityAndDateAndTripStatus(String startCity, String endCity, LocalDate date, Pageable pageable, TripStatus tripStatus);
     TripResponse getTripById(Long id);
 
     List<Trip> findByTripStatusAndDateAndTime(TripStatus tripStatus, LocalDate date, LocalTime time);
+
+    Set<TripResponse> getTripsByDriverAndTripStatus(User driver, TripStatus tripStatus);
+
+    Set<Trip> findAllByTripStatus(TripStatus tripStatus);
+
+    Trip getTripByDriverAndTripStatus(User driver, TripStatus tripStatus);
 
 }

@@ -40,4 +40,21 @@ public class ImageService implements IImageService {
         }
     }
 
+    @Override
+    public String deleteImage(String imagePath) {
+        File file = new File(imagePath);
+
+        if (file.exists()) {
+            if (file.delete()) {
+                return "Image deleted successfully";
+            } else {
+                return "Failed to delete the image";
+            }
+        } else {
+            return "Image not found";
+        }
+    }
+
+
+
 }

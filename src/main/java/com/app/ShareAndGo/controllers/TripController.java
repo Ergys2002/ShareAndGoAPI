@@ -55,4 +55,20 @@ public class TripController {
     public ResponseEntity<?> getTripById(@RequestParam("id") Long id){
         return tripService.getTripById(id);
     }
+
+    @GetMapping("/trips-as-driver")
+    public ResponseEntity<?> getTripsAsDriver(){
+        return tripService.getTripsAsDriver();
+    }
+
+    @GetMapping("/trips-as-passenger")
+    public ResponseEntity<?> getTripsAsPassenger(){
+        return tripService.getTripsAsPassenger();
+
+    }
+
+    @PutMapping("/finish-trip")
+    public ResponseEntity<?> endTrip(){
+        return tripService.endActiveTripOfAuthenticatedUser();
+    }
 }

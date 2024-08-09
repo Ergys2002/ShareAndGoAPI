@@ -15,11 +15,23 @@ import java.io.IOException;
 @RequestMapping("/images")
 public class FileController {
 
-    @GetMapping("/{filename}")
-    public ResponseEntity<byte[]> getImage(@PathVariable("filename") String filename) {
+    @GetMapping("/users/{filename}")
+    public ResponseEntity<byte[]> getUserImage(@PathVariable("filename") String filename) {
         byte[] image = new byte[0];
         try {
             String FILE_PATH_ROOT = "src/main/resources/static/img/users/";
+            image = FileUtils.readFileToByteArray(new File(FILE_PATH_ROOT +filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+    }
+
+    @GetMapping("/cars/{filename}")
+    public ResponseEntity<byte[]> getCarImage(@PathVariable("filename") String filename) {
+        byte[] image = new byte[0];
+        try {
+            String FILE_PATH_ROOT = "src/main/resources/static/img/cars/";
             image = FileUtils.readFileToByteArray(new File(FILE_PATH_ROOT +filename));
         } catch (IOException e) {
             e.printStackTrace();

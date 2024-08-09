@@ -147,6 +147,7 @@ public class UserService implements IUserService {
                 .firstname(userData.getFirstname())
                 .lastname(userData.getLastname())
                 .birthDate(LocalDate.parse(userData.getBirthDate()))
+                .profilePictureUrl("default_profile_picture.jpg")
                 .gender(userData.getGender())
                 .build();
 

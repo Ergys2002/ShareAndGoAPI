@@ -31,6 +31,8 @@ public class TransactionService implements ITransactionService {
         User driver = activeTripOfAuthenticatedUser.getDriver();
 
         driver.setAccountBalance(driver.getAccountBalance() + totalPrice);
+        userRepository.save(driver);
+
 
         Transaction transaction = Transaction.builder()
                 .amount(totalPrice)

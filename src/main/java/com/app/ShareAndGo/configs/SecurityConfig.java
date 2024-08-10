@@ -48,16 +48,23 @@ public class SecurityConfig {
                                 "/api/car/add-car",
                                 "/api/withdrawal/withdraw",
                                 "/api/recharge",
-                                "api/car/all-cars",
-                                "api/trip-application/apply-to-reserve"
+                                "/api/car/all-cars",
+                                "/api/trip-application/apply-to-reserve",
+                                "/api/feedback/review/leave-review"
                                 ).hasAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN" , "SUPERADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/car/delete-car").hasAuthority("USER")
                         .requestMatchers(HttpMethod.PUT, "/api/withdrawal/admin/confirm-withdrawal", "/api/withdrawal/admin/reject-withdrawal").hasAnyAuthority("ADMIN" , "SUPERADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/booking/reject-application", "/api/booking/confirm-application", "/api/trip/cancel-trip", "/api/user/update-profile").hasAnyAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/booking/reject-application",
+                                "/api/booking/confirm-application",
+                                "/api/trip/cancel-trip",
+                                "/api/user/update-profile",
+                                "/api/trip/pay-for-trip",
+                                "/api/trip/finish-trip"
+                                ).hasAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/api/trip/trip-by-id" , "/api/preference/preferences-by-trip-id", "/api/user/auth-user").hasAuthority("USER")
-                        .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter , UsernamePasswordAuthenticationFilter.class);

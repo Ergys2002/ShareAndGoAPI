@@ -50,7 +50,8 @@ public class CarService implements ICarService {
                             carData.getMake() +
                             "_" + carData.getModel() +
                             "_" + carOwner.getProfile().getFirstname() + "_"
-                            + carOwner.getProfile().getLastname();
+                            + carOwner.getProfile().getLastname() + "_"
+                    + carData.getLicencePlateNumber();
 
             try {
                 String newProfilePhotoPath = imageService.saveImage(path, carData.getCarImage(), imageName);

@@ -63,6 +63,7 @@ public class TripService implements ITripService {
                 .duration(tripData.getDuration())
                 .driver(authenticatedUser)
                 .car(car)
+                .tripStatus(TripStatus.CREATED)
                 .build();
 
         boolean hasInterferingTrips = tripsOfAuthenticatedDriver.stream().anyMatch(trip -> checkOverlap(trip, newTrip));
@@ -316,7 +317,9 @@ public class TripService implements ITripService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi qe doni te paguani nuk ekziston");
         }
 
+
         double totalPrice = bookingOfUser.getReservedSeats() * activeTripOfAuthenticatedUser.getPricePerSeat();
+
 
         return transactionService.createTransaction(authenticatedUser, activeTripOfAuthenticatedUser, totalPrice);
     }

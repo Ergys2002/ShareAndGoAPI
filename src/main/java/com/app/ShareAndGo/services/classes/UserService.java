@@ -327,6 +327,11 @@ public class UserService implements IUserService {
                 .build());
     }
 
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
     private void updateBasicProfileInfo(UserProfile userProfile, ProfileUpdateRequest profileUpdateRequest) {
         userProfile.setFirstname(profileUpdateRequest.getFirstname());
         userProfile.setLastname(profileUpdateRequest.getLastname());

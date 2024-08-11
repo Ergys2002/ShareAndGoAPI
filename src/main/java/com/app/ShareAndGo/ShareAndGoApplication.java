@@ -14,7 +14,7 @@ public class ShareAndGoApplication {
 	}
 
 	/*todo
-	*  test implementation for method payForTrip */
+	*  check phone number  qe thot maksi ne metoda update profile */
 
 
 

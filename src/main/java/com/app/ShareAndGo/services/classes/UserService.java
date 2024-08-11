@@ -339,7 +339,8 @@ public class UserService implements IUserService {
     }
 
     private boolean isPhoneNumberInUse(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber) != null;
+        User phoneNumberOwner = userRepository.findByPhoneNumber(phoneNumber);
+        return phoneNumberOwner != null && !phoneNumberOwner.getId().equals(getAuthenticatedUser().getId());
     }
 
     private void handlePasswordUpdate(User user, ProfileUpdateRequest profileUpdateRequest) {

@@ -48,7 +48,6 @@ public class SecurityConfig {
                                 "/api/car/add-car",
                                 "/api/withdrawal/withdraw",
                                 "/api/recharge",
-                                "/api/car/all-cars",
                                 "/api/trip-application/apply-to-reserve",
                                 "/api/feedback/review/leave-review"
                                 ).hasAuthority("USER")
@@ -64,7 +63,13 @@ public class SecurityConfig {
                                 "/api/trip/pay-for-trip",
                                 "/api/trip/finish-trip"
                                 ).hasAuthority("USER")
-                        .requestMatchers(HttpMethod.GET, "/api/trip/trip-by-id" , "/api/preference/preferences-by-trip-id", "/api/user/auth-user").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/trip/trip-by-id" ,
+                                "/api/preference/preferences-by-trip-id",
+                                "/api/user/auth-user",
+                                "/api/trip/**",
+                                "/api/car/all-cars"
+                        ).hasAuthority("USER")
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter , UsernamePasswordAuthenticationFilter.class);

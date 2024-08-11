@@ -1,6 +1,7 @@
 package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.TripApplicationRequest;
+import com.app.ShareAndGo.dto.responses.TripApplicationResponse;
 import com.app.ShareAndGo.entities.Package;
 import com.app.ShareAndGo.entities.Trip;
 import com.app.ShareAndGo.entities.TripApplication;
@@ -57,6 +58,21 @@ public class TripApplicationService  implements ITripApplicationService {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tipi i rezervimit i pasakte");
         }
+    }
+
+    @Override
+    public ResponseEntity<?> getTripApplicationsOfATrip(Long tripId) {
+        Trip trip = tripService.getById(tripId);
+
+        if (trip == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi nuk ekzistion");
+        }
+        Set<TripApplicationResponse> tripApplications = tripApplicationRepository.findTripApplicationsByTrip(trip);
+
+        if (tripApplications.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ka asnje aplikim per rezervim per kete udhetim");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(tripApplications);
     }
 
     private ResponseEntity<?> handlePassengerOnlyApplication(TripApplicationRequest request , Trip trip, User user){

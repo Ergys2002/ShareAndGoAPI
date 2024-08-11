@@ -12,4 +12,6 @@ public interface IWithdrawalService {
     ResponseEntity<?> confirmWithdrawal(Long id);
 
     ResponseEntity<?> rejectWithdrawal(Long id);
+
+    ResponseEntity<?> getWithdrawalsOfAuthenticatedUser();
 }

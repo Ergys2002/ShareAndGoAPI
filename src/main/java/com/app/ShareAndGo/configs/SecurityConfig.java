@@ -67,7 +67,10 @@ public class SecurityConfig {
                                 "/api/user/auth-user",
                                 "/api/trip/**",
                                 "/api/car/all-cars",
-                                "/api/feedback/review/by-trip"
+                                "/api/feedback/review/by-trip",
+                                "/api/withdrawal/all-withdrawals",
+                                "/api/trip-application/by-trip",
+                                "/api/booking/by-trip"
                         ).hasAuthority("USER")
                 )
                 .authenticationProvider(authenticationProvider)

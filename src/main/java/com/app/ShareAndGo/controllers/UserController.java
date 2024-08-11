@@ -49,5 +49,10 @@ public class UserController {
         return userService.updateUserData(profileUpdateRequest);
     }
 
+    @GetMapping("/user/balance")
+    public ResponseEntity<?> getBalanceOfAuthenticatedUser(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAuthenticatedUser().getAccountBalance());
+    }
+
 
 }

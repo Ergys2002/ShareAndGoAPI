@@ -5,4 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface ITripApplicationService {
     ResponseEntity<?> applyForTripReservation(TripApplicationRequest tripApplicationRequest);
+
+    ResponseEntity<?> getTripApplicationsOfATrip(Long tripId);
 }

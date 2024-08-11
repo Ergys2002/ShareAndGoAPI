@@ -6,4 +6,6 @@ public interface IBookingService {
     ResponseEntity<?> confirmTripApplication(Long applicationId);
 
     ResponseEntity<?> rejectTripApplication(Long applicationId);
+
+    ResponseEntity<?> getBookingsByTripId(Long tripId);
 }

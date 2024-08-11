@@ -37,7 +37,6 @@ public class TripService implements ITripService {
     private final IUserService userService;
     private final TripRepository tripRepository;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
     private final ITransactionService transactionService;
     private final TripApplicationRepository tripApplicationRepository;
     private final CarRepository carRepository;

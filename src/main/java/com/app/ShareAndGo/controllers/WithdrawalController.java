@@ -32,4 +32,9 @@ public class WithdrawalController {
     public ResponseEntity<?> rejectWithdrawal(@RequestParam("id") Long id){
         return withdrawalService.rejectWithdrawal(id);
     }
+
+    @GetMapping("/all-withdrawals")
+    public ResponseEntity<?> getAllWithdrawalsOfAuthenticatedUser(){
+        return withdrawalService.getWithdrawalsOfAuthenticatedUser();
+    }
 }

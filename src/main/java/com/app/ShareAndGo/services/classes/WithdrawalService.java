@@ -94,4 +94,17 @@ public class WithdrawalService implements IWithdrawalService {
 
         return ResponseEntity.status(HttpStatus.OK).body("Kerkesa per terheqje u anulua");
     }
+
+    @Override
+    public ResponseEntity<?> getWithdrawalsOfAuthenticatedUser() {
+        User user = userService.getAuthenticatedUser();
+
+        Set<WithdrawalResponse> withdrawals = withdrawalRepository.findAllByUser(user);
+
+        if (withdrawals.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje terheqje");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(withdrawals);
+    }
 }

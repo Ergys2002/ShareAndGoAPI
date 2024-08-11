@@ -6,10 +6,7 @@ import com.app.ShareAndGo.services.interfaces.IReportService;
 import com.app.ShareAndGo.services.interfaces.IReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/feedback")
@@ -27,5 +24,10 @@ public class TripFeedbackController {
     @PostMapping("/report/create-report")
     public ResponseEntity<?> createReport(@RequestBody ReportRequest request){
         return reportService.createReport(request);
+    }
+
+    @GetMapping("/review/by-trip")
+    public ResponseEntity<?> getReviewsByTripId(@RequestParam("id") Long tripId){
+        return reviewService.getReviewsByTripId(tripId);
     }
 }

@@ -15,4 +15,6 @@ public interface TripFeedbackRepository extends JpaRepository<TripFeedback, Long
     TripFeedback findTripFeedbackByTripAndReviewerAndRecipientAndFeedbackType(Trip trip, User reviewer, User recipient, FeedbackType feedbackType);
 
     Set<TripFeedback> findTripFeedbacksByFeedbackTypeAndRecipient(FeedbackType feedbackType, User recipient);
+
+    Set<TripFeedback> findTripFeedbacksByFeedbackTypeAndTrip(FeedbackType feedbackType, Trip trip);
 }

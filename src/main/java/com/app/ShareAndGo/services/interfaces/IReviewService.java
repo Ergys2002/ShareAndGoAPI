@@ -5,4 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface IReviewService {
     ResponseEntity<?> createReview(ReviewRequest request);
+
+    ResponseEntity<?> getReviewsByTripId(Long tripId);
 }

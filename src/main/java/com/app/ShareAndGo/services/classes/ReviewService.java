@@ -1,6 +1,7 @@
 package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.ReviewRequest;
+import com.app.ShareAndGo.dto.responses.ReviewResponse;
 import com.app.ShareAndGo.entities.*;
 import com.app.ShareAndGo.enums.FeedbackType;
 import com.app.ShareAndGo.repositories.ReviewRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,5 +81,33 @@ public class ReviewService implements IReviewService {
         tripFeedbackRepository.save(feedback);
 
         return ResponseEntity.status(HttpStatus.OK).body("Pershtypja juaj u ruajt me sukses");
+    }
+
+    @Override
+    public ResponseEntity<?> getReviewsByTripId(Long tripId) {
+        Trip trip = tripRepository.findById(tripId).orElse(null);
+        if (trip == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi nuk ekziston");
+        }
+
+        Set<TripFeedback> tripFeedbacks = tripFeedbackRepository.findTripFeedbacksByFeedbackTypeAndTrip(FeedbackType.REVIEW, trip);
+
+        if(tripFeedbacks.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ka asnje pershtypje per kete udhetim");
+        }
+        Set<ReviewResponse> reviews = tripFeedbacks.stream().map(tripFeedback -> ReviewResponse.builder()
+                .reviewId(tripFeedback.getId())
+                .reviewerId(tripFeedback.getReviewer().getId())
+                .recipientId(tripFeedback.getRecipient().getId())
+                .reviewerName(tripFeedback.getReviewer().getProfile().getFirstname() + " " + tripFeedback.getReviewer().getProfile().getLastname())
+                .recipientName(tripFeedback.getRecipient().getProfile().getFirstname() + " " + tripFeedback.getRecipient().getProfile().getLastname())
+                .reviewerProfilePictureUrl(tripFeedback.getReviewer().getProfile().getProfilePictureUrl())
+                .recipientProfilePictureUrl(tripFeedback.getRecipient().getProfile().getProfilePictureUrl())
+                .rating(tripFeedback.getReview().getRating())
+                .comment(tripFeedback.getReview().getComment())
+                .build()).collect(Collectors.toSet());
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(reviews);
     }
 }

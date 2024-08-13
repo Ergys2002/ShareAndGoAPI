@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sup-admin/create-admin").hasAuthority("SUPERADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/user/sign-up","/api/user/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/sign-up", "/api/user/login").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/trip/create-trip",
                                 "/api/trip/3-latest",
@@ -48,11 +48,11 @@ public class SecurityConfig {
                                 "/api/recharge",
                                 "/api/trip-application/apply-to-reserve",
                                 "/api/feedback/review/leave-review"
-                                ).hasAuthority("USER")
+                        ).hasAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN" , "SUPERADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN", "SUPERADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/car/delete-car").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/withdrawal/admin/confirm-withdrawal", "/api/withdrawal/admin/reject-withdrawal").hasAnyAuthority("ADMIN" , "SUPERADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/withdrawal/admin/confirm-withdrawal", "/api/withdrawal/admin/reject-withdrawal").hasAnyAuthority("ADMIN", "SUPERADMIN")
                         .requestMatchers(HttpMethod.PUT,
                                 "/api/booking/reject-application",
                                 "/api/booking/confirm-application",
@@ -60,21 +60,22 @@ public class SecurityConfig {
                                 "/api/user/update-profile",
                                 "/api/trip/pay-for-trip",
                                 "/api/trip/finish-trip"
-                                ).hasAuthority("USER")
+                        ).hasAuthority("USER")
                         .requestMatchers(HttpMethod.GET,
-                                "/api/trip/trip-by-id" ,
+                                "/api/trip/**",
                                 "/api/preference/preferences-by-trip-id",
                                 "/api/user/auth-user",
-                                "/api/trip/**",
                                 "/api/car/all-cars",
                                 "/api/feedback/review/by-trip",
                                 "/api/withdrawal/all-withdrawals",
-                                "/api/trip-application/by-trip",
+                                "/api/trip-application/**",
                                 "/api/booking/by-trip"
                         ).hasAuthority("USER")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources").permitAll()
                 )
+
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter , UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -235,6 +235,34 @@ public class TripService implements ITripService {
         return ResponseEntity.status(HttpStatus.OK).body("Ju fituat " + totalEarned + "ALL nga ky udhetim");
     }
 
+    @Override
+    public ResponseEntity<?> getActiveTripsAsDriver() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        Set<TripResponse> activeTripsAsDriver = tripRepository.getTripsByDriverAndTripStatus(authenticatedUser, TripStatus.CREATED);
+        if (activeTripsAsDriver.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si shofer");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(activeTripsAsDriver);
+    }
+
+    @Override
+    public ResponseEntity<?> getActiveTripsAsPassenger() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        Set<Trip> activeTripsAsPassenger = authenticatedUser.getBookings()
+                .stream()
+                .filter(booking -> booking.getTrip().getTripStatus().equals(TripStatus.CREATED)
+                ).collect(Collectors.toSet())
+                .stream()
+                .map(Booking::getTrip)
+                .collect(Collectors.toSet());
+        if (activeTripsAsPassenger.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si pasagjer");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(activeTripsAsPassenger);
+    }
+
     public Trip saveTrip(Trip trip) {
         return tripRepository.save(trip);
     }

@@ -91,7 +91,10 @@ public class User extends BaseEntity implements UserDetails{
     private Set<PreviousPassword> previousPasswords;
 
     @OneToMany(mappedBy = "sender")
-    private Set<Message> messages;
+    private Set<Message> messagesSent;
+
+    @OneToMany(mappedBy = "receiver")
+    private Set<Message> messagesReceived;
 
     @OneToMany(mappedBy = "user")
     private Set<UserLog> userLogs;

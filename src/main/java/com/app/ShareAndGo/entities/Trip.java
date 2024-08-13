@@ -66,8 +66,5 @@ public class Trip extends BaseEntity{
     private Set<TripPreference> tripPreferences;
 
     @OneToMany(mappedBy = "trip")
-    private Set<Message> messages;
-
-    @OneToMany(mappedBy = "trip")
     private Set<TripLog> tripLogs;
 }

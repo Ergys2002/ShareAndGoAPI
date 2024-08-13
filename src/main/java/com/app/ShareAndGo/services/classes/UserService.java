@@ -3,6 +3,7 @@ package com.app.ShareAndGo.services.classes;
 import com.app.ShareAndGo.configs.JwtService;
 import com.app.ShareAndGo.dto.requests.*;
 import com.app.ShareAndGo.dto.responses.AdminLoginResponse;
+import com.app.ShareAndGo.dto.responses.AdminResponse;
 import com.app.ShareAndGo.dto.responses.UserLoginResponse;
 import com.app.ShareAndGo.dto.responses.UserResponse;
 import com.app.ShareAndGo.entities.PreviousPassword;
@@ -330,6 +331,54 @@ public class UserService implements IUserService {
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public ResponseEntity<?> getAuthenticatedAdmin() {
+        User authenticatedUser = getAuthenticatedUser();
+
+        AdminResponse adminResponse = new AdminResponse() {
+            @Override
+            public String getPhoneNumber() {
+                return authenticatedUser.getPhoneNumber();
+            }
+
+            @Override
+            public double getAccountBalance() {
+                return authenticatedUser.getAccountBalance();
+            }
+
+            @Override
+            public String getEmail() {
+                return authenticatedUser.getEmail();
+            }
+
+            @Override
+            public String getNid() {
+                return authenticatedUser.getNid();
+            }
+
+            @Override
+            public double getSalary() {
+                return authenticatedUser.getSalary();
+            }
+
+            @Override
+            public Role getRole() {
+                return authenticatedUser.getRole();
+            }
+
+            @Override
+            public LocalDate getCreatedAt() {
+                return authenticatedUser.getCreatedAt();
+            }
+
+            @Override
+            public UserProfile getProfile() {
+                return authenticatedUser.getProfile();
+            }
+        };
+        return ResponseEntity.ok(adminResponse);
     }
 
     private void updateBasicProfileInfo(UserProfile userProfile, ProfileUpdateRequest profileUpdateRequest) {

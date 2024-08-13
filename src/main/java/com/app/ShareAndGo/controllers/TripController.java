@@ -29,6 +29,16 @@ public class TripController {
         return tripService.getAllTrips(page, size);
     }
 
+    @GetMapping("/active-trips-as-driver")
+    public ResponseEntity<?> getActiveTripsAsDriver(){
+        return tripService.getActiveTripsAsDriver();
+    }
+
+    @GetMapping("/active-trips-as-passenger")
+    public ResponseEntity<?> getActiveTripsAsPassenger(){
+        return tripService.getActiveTripsAsPassenger();
+    }
+
     @GetMapping("/filtered-trips")
     public ResponseEntity<?> getFilteredTrips(
             @RequestParam("page") int page,

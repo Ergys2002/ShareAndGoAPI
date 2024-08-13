@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,12 +38,12 @@ public class TripApplicationService  implements ITripApplicationService {
         Trip trip = tripService.getById(tripApplicationRequest.getTripId());
         User authenticatedUser = userService.getAuthenticatedUser();
 
-        if (Objects.equals(trip.getDriver().getId(), authenticatedUser.getId())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Ju nuk mund te rezervoni ne udhetimin tuaj");
-        }
-
         if(trip == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi per te cilin doni te aplikoni nuk ekziston");
+        }
+
+        if (Objects.equals(trip.getDriver().getId(), authenticatedUser.getId())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Ju nuk mund te rezervoni ne udhetimin tuaj");
         }
 
         if (trip.getAvailableSeats() < tripApplicationRequest.getNumberOfSeats()){
@@ -72,6 +73,72 @@ public class TripApplicationService  implements ITripApplicationService {
         if (tripApplications.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ka asnje aplikim per rezervim per kete udhetim");
         }
+        return ResponseEntity.status(HttpStatus.OK).body(tripApplications);
+    }
+
+    @Override
+    public ResponseEntity<?> getTripApplicationsAsDriverByTripId(Long tripId) {
+        Trip trip = tripService.getById(tripId);
+
+        Set<TripApplication> tripApplications = trip.getTripApplications();
+        if (tripApplications.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Udhetimi juaj nuk ka asnje aplikim");
+        }
+
+        Set<TripApplicationResponse> tripApplicationResponses = tripApplications.stream().map(tripApplication -> new TripApplicationResponse() {
+            @Override
+            public Long getId() {
+                return tripApplication.getId();
+            }
+
+            @Override
+            public ApplicationType getApplicationType() {
+                return tripApplication.getApplicationType();
+            }
+
+            @Override
+            public ApplicationStatus getStatus() {
+                return tripApplication.getStatus();
+            }
+
+            @Override
+            public int getNumberOfSeats() {
+                return tripApplication.getNumberOfSeats();
+            }
+
+            @Override
+            public Long getApplicantId() {
+                return tripApplication.getApplicant().getId();
+            }
+
+            @Override
+            public String getApplicantFirstname() {
+                return tripApplication.getApplicant().getProfile().getFirstname();
+            }
+
+            @Override
+            public String getApplicantLastname() {
+                return  tripApplication.getApplicant().getProfile().getLastname();
+            }
+
+            @Override
+            public String getApplicantProfilePictureUrl() {
+                return  tripApplication.getApplicant().getProfile().getProfilePictureUrl();
+            }
+        }).collect(Collectors.toSet());
+        return ResponseEntity.status(HttpStatus.OK).body(tripApplicationResponses);
+    }
+
+    @Override
+    public ResponseEntity<?> getTripApplicationsOfPassenger() {
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        Set<TripApplicationResponse> tripApplications = tripApplicationRepository.findTripApplicationsByApplicant(authenticatedUser);
+
+        if (tripApplications.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Ju nuk keni aplikuar per asnje udhetim");
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(tripApplications);
     }
 

@@ -54,5 +54,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAuthenticatedUser().getAccountBalance());
     }
 
+    @GetMapping("/admin/auth-admin")
+    public ResponseEntity<?> getAuthenticatedAdmin(){
+        return userService.getAuthenticatedAdmin();
+    }
+
 
 }

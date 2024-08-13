@@ -26,4 +26,8 @@ public interface ITripService {
     ResponseEntity<?> getTripsAsPassenger();
 
     ResponseEntity<?> endActiveTripOfAuthenticatedUser();
+
+    ResponseEntity<?> getActiveTripsAsDriver();
+
+    ResponseEntity<?> getActiveTripsAsPassenger();
 }

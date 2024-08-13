@@ -21,4 +21,6 @@ public interface IUserService {
      ResponseEntity<?> updateUserData(ProfileUpdateRequest profileUpdateRequest);
 
      User getUserById(Long id);
+
+    ResponseEntity<?> getAuthenticatedAdmin();
 }

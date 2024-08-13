@@ -21,4 +21,15 @@ public class TripApplicationController{
     public ResponseEntity<?> getTripApplicationsOfATrip(@RequestParam("id") Long tripId){
         return tripApplicationService.getTripApplicationsOfATrip(tripId);
     }
+
+    @GetMapping("/for-driver-by-trip-id")
+    public ResponseEntity<?> getTripApplicationsAsDriverByTripId(@RequestParam("id") Long tripId){
+        return tripApplicationService.getTripApplicationsAsDriverByTripId(tripId);
+    }
+
+    @GetMapping("/for-passenger-by-trip-id")
+    public ResponseEntity<?> getTripApplicationsAsPassengerByTripId(){
+        return tripApplicationService.getTripApplicationsOfPassenger();
+    }
+
 }

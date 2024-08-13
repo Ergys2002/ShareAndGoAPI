@@ -7,4 +7,8 @@ public interface ITripApplicationService {
     ResponseEntity<?> applyForTripReservation(TripApplicationRequest tripApplicationRequest);
 
     ResponseEntity<?> getTripApplicationsOfATrip(Long tripId);
+
+    ResponseEntity<?> getTripApplicationsAsDriverByTripId(Long tripId);
+
+    ResponseEntity<?> getTripApplicationsOfPassenger();
 }

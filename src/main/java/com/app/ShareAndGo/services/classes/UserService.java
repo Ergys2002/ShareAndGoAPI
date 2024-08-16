@@ -9,6 +9,7 @@ import com.app.ShareAndGo.dto.responses.UserResponse;
 import com.app.ShareAndGo.entities.PreviousPassword;
 import com.app.ShareAndGo.entities.User;
 import com.app.ShareAndGo.entities.UserProfile;
+import com.app.ShareAndGo.enums.ActivityStatus;
 import com.app.ShareAndGo.enums.Role;
 import com.app.ShareAndGo.repositories.PreviousPasswordRepository;
 import com.app.ShareAndGo.repositories.UserProfileRepository;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -369,9 +371,10 @@ public class UserService implements IUserService {
             }
 
             @Override
-            public LocalDate getCreatedAt() {
+            public LocalDateTime getCreatedAt() {
                 return authenticatedUser.getCreatedAt();
             }
+
 
             @Override
             public UserProfile getProfile() {
@@ -379,6 +382,26 @@ public class UserService implements IUserService {
             }
         };
         return ResponseEntity.ok(adminResponse);
+    }
+
+    @Override
+    public User connectUser() {
+        User authenticatedUser = getAuthenticatedUser();
+        if (authenticatedUser != null){
+            authenticatedUser.setStatus(ActivityStatus.ONLINE);
+            userRepository.save(authenticatedUser);
+        }
+        return authenticatedUser;
+    }
+
+    @Override
+    public User disconnectUser() {
+        User authenticatedUser = getAuthenticatedUser();
+        if (authenticatedUser != null){
+            authenticatedUser.setStatus(ActivityStatus.OFFLINE);
+            userRepository.save(authenticatedUser);
+        }
+        return authenticatedUser;
     }
 
     private void updateBasicProfileInfo(UserProfile userProfile, ProfileUpdateRequest profileUpdateRequest) {

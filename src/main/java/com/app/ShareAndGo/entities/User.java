@@ -2,6 +2,7 @@ package com.app.ShareAndGo.entities;
 
 import com.app.ShareAndGo.entities.logs.BookingLog;
 import com.app.ShareAndGo.entities.logs.UserLog;
+import com.app.ShareAndGo.enums.ActivityStatus;
 import com.app.ShareAndGo.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -40,6 +41,9 @@ public class User extends BaseEntity implements UserDetails{
     private boolean disabled;
 
     private int salary;
+
+    @Enumerated(EnumType.STRING)
+    private ActivityStatus status;
 
     @Column(name = "is_banned")
     private boolean isBanned;
@@ -95,6 +99,12 @@ public class User extends BaseEntity implements UserDetails{
 
     @OneToMany(mappedBy = "receiver")
     private Set<Message> messagesReceived;
+
+    @OneToMany(mappedBy = "sender")
+    private Set<Chat> chatsAsSender;
+
+    @OneToMany(mappedBy = "recipient")
+    private Set<Chat> chatsAsRecipient;
 
     @OneToMany(mappedBy = "user")
     private Set<UserLog> userLogs;

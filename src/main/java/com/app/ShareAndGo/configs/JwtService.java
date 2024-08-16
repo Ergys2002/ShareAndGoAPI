@@ -5,8 +5,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -20,9 +24,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     private static final String SECRET_KEY = "3a7f6b2d9e8c5f12471036a9b8c2e1f738d4a6b5c9e7f0d325e8a1c7f6b2d9e";
+    private final UserDetailsService userDetailsService;
 
     public String extractUsername(String token){
         return extractClaim(token , Claims::getSubject);
@@ -78,5 +84,15 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = getUserDetails(token);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+   UserDetails getUserDetails(String token) {
+        String username = extractUsername(token);
+        return userDetailsService.loadUserByUsername(username);
     }
 }

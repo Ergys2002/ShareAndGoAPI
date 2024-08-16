@@ -23,4 +23,8 @@ public interface IUserService {
      User getUserById(Long id);
 
     ResponseEntity<?> getAuthenticatedAdmin();
+
+    User connectUser();
+
+    User disconnectUser();
 }

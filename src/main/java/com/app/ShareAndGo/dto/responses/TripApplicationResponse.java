@@ -18,4 +18,7 @@ public interface TripApplicationResponse {
     String getApplicantLastname();
     @Value("#{target.applicant.profile.profilePictureUrl}")
     String getApplicantProfilePictureUrl();
+
+    @Value("#{target.trip.id}")
+    Long getTripId();
 }

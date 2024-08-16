@@ -1,6 +1,7 @@
 package com.app.ShareAndGo.controllers;
 
 import com.app.ShareAndGo.dto.requests.*;
+import com.app.ShareAndGo.entities.User;
 import com.app.ShareAndGo.services.interfaces.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -37,6 +41,18 @@ public class UserController {
     @PostMapping("/user/login")
     public ResponseEntity<?> userLogin(@Valid @RequestBody UserLoginRequest userLoginRequest){
         return userService.login(userLoginRequest);
+    }
+
+    @MessageMapping("/user.connectUser")
+    @SendTo("/user/public")
+    public User connectUser(){
+        return userService.connectUser();
+    }
+
+    @MessageMapping("/user.disconnectUser")
+    @SendTo("/user/public")
+    public User disconnectUser(){
+        return userService.disconnectUser();
     }
 
     @GetMapping("/user/auth-user")

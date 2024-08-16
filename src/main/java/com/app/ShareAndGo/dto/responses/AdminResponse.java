@@ -4,6 +4,7 @@ import com.app.ShareAndGo.entities.UserProfile;
 import com.app.ShareAndGo.enums.Role;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface AdminResponse {
     String getPhoneNumber();
@@ -14,6 +15,6 @@ public interface AdminResponse {
     Role getRole();
 
     //Date of hiring might be shown at profile of admin
-    LocalDate getCreatedAt();
+    LocalDateTime getCreatedAt();
     UserProfile getProfile();
 }

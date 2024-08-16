@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter @Setter
 @MappedSuperclass
@@ -17,11 +18,11 @@ public class BaseEntity implements Serializable {
     private Long id;
 
     @Column(name = "created_at")
-    protected LocalDate createdAt;
+    protected LocalDateTime createdAt;
 
 
     @PrePersist
     public void setCreatedAt() {
-        createdAt = LocalDate.now();
+        createdAt = LocalDateTime.now();
     }
 }

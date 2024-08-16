@@ -125,6 +125,11 @@ public class TripApplicationService  implements ITripApplicationService {
             public String getApplicantProfilePictureUrl() {
                 return  tripApplication.getApplicant().getProfile().getProfilePictureUrl();
             }
+
+            @Override
+            public Long getTripId() {
+                return tripApplication.getTrip().getId();
+            }
         }).collect(Collectors.toSet());
         return ResponseEntity.status(HttpStatus.OK).body(tripApplicationResponses);
     }

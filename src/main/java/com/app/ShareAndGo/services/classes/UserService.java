@@ -2,10 +2,7 @@ package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.configs.JwtService;
 import com.app.ShareAndGo.dto.requests.*;
-import com.app.ShareAndGo.dto.responses.AdminLoginResponse;
-import com.app.ShareAndGo.dto.responses.AdminResponse;
-import com.app.ShareAndGo.dto.responses.UserLoginResponse;
-import com.app.ShareAndGo.dto.responses.UserResponse;
+import com.app.ShareAndGo.dto.responses.*;
 import com.app.ShareAndGo.entities.PreviousPassword;
 import com.app.ShareAndGo.entities.User;
 import com.app.ShareAndGo.entities.UserProfile;
@@ -402,6 +399,35 @@ public class UserService implements IUserService {
             userRepository.save(authenticatedUser);
         }
         return authenticatedUser;
+    }
+
+    @Override
+    public ResponseEntity<?> getUserStatistics() {
+        User authenticatedUser = getAuthenticatedUser();
+
+        UserStatistic statistic = UserStatistic.builder()
+                .userId(authenticatedUser.getId())
+                .tripsOffered(authenticatedUser.getProfile().getTripsOffered())
+                .tripsReceived(authenticatedUser.getProfile().getTripsReceived())
+                .packagesDelivered(authenticatedUser.getProfile().getPackagesDelivered())
+                .packagesSent(authenticatedUser.getProfile().getPackagesSent())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(statistic);
+    }
+
+    @Override
+    public ResponseEntity<?> banUser(Long userId) {
+        User userToBeBanned = userRepository.findById(userId).orElse(null);
+
+        if (userToBeBanned == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User not found");
+        }
+
+        userToBeBanned.setDisabled(true);
+
+        userRepository.save(userToBeBanned);
+        return ResponseEntity.status(HttpStatus.OK).body("User has been banned");
     }
 
     private void updateBasicProfileInfo(UserProfile userProfile, ProfileUpdateRequest profileUpdateRequest) {

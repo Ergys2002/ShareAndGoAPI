@@ -18,5 +18,4 @@ public class ReportResponse {
     private String recipientProfilePictureUrl;
     private ReportPurpose reportPurpose;
     private String description;
-
 }

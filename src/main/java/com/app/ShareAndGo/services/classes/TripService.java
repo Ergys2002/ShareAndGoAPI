@@ -5,6 +5,7 @@ import com.app.ShareAndGo.dto.responses.TripResponse;
 import com.app.ShareAndGo.entities.*;
 import com.app.ShareAndGo.enums.ApplicationStatus;
 import com.app.ShareAndGo.enums.BookingStatus;
+import com.app.ShareAndGo.enums.BookingType;
 import com.app.ShareAndGo.enums.TripStatus;
 import com.app.ShareAndGo.repositories.*;
 import com.app.ShareAndGo.services.interfaces.ITransactionService;
@@ -40,6 +41,7 @@ public class TripService implements ITripService {
     private final ITransactionService transactionService;
     private final TripApplicationRepository tripApplicationRepository;
     private final CarRepository carRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Override
     public ResponseEntity<?> createTrip(TripCreationRequest tripData) {
@@ -107,7 +109,7 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getTripById(Long id) {
         TripResponse tripResponse = tripRepository.getTripById(id);
-        if (tripResponse == null){
+        if (tripResponse == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi nuk ekziston");
         }
         return ResponseEntity.status(HttpStatus.OK).body(tripResponse);
@@ -116,9 +118,9 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getTripsAsDriver() {
         User authenticatedUser = userService.getAuthenticatedUser();
-        Set<TripResponse> tripResponses = tripRepository.getTripsByDriverAndTripStatus(authenticatedUser , TripStatus.FINISHED);
+        Set<TripResponse> tripResponses = tripRepository.getTripsByDriverAndTripStatus(authenticatedUser, TripStatus.FINISHED);
 
-        if (tripResponses.isEmpty()){
+        if (tripResponses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si shofer");
         }
         return ResponseEntity.status(HttpStatus.OK).body(tripResponses);
@@ -136,7 +138,7 @@ public class TripService implements ITripService {
                                 Objects.equals(booking.getPassenger().getId(), authenticatedUser.getId())))
                 .collect(Collectors.toSet());
 
-        if (tripsAsPassenger.isEmpty()){
+        if (tripsAsPassenger.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si pasagjer");
         }
 
@@ -225,13 +227,36 @@ public class TripService implements ITripService {
 
         Trip activeTripOfAuthenticatedUser = tripRepository.getTripByDriverAndTripStatus(authenticatedUser, TripStatus.STARTED);
 
-        if (activeTripOfAuthenticatedUser == null){
+        if (activeTripOfAuthenticatedUser == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ju nuk keni nje udhetim aktiv");
         }
 
         double totalEarned = activeTripOfAuthenticatedUser.getPricePerSeat() * (activeTripOfAuthenticatedUser.getTotalSeats() - activeTripOfAuthenticatedUser.getAvailableSeats());
         activeTripOfAuthenticatedUser.setTripStatus(TripStatus.FINISHED);
         tripRepository.save(activeTripOfAuthenticatedUser);
+
+        int packagesDelivered = (int) activeTripOfAuthenticatedUser.getBookings().stream().filter(booking -> booking.getBookingType().equals(BookingType.PACKAGE_ONLY) || booking.getBookingType().equals(BookingType.PASSENGER_WITH_PACKAGE)).count();
+
+        UserProfile profile = authenticatedUser.getProfile();
+        profile.setPackagesDelivered(profile.getPackagesDelivered() + packagesDelivered);
+        profile.setTripsOffered(profile.getTripsOffered() + 1);
+
+        Set<Booking> bookings = activeTripOfAuthenticatedUser.getBookings();
+        bookings.forEach(booking -> {
+            UserProfile passengerProfile = booking.getPassenger().getProfile();
+            BookingType bookingType = booking.getBookingType();
+
+            if (bookingType.equals(BookingType.PACKAGE_ONLY)){
+                passengerProfile.setPackagesSent(passengerProfile.getPackagesSent() + 1);
+            } else if (bookingType.equals(BookingType.PASSENGER_WITH_PACKAGE)) {
+                passengerProfile.setPackagesSent(passengerProfile.getPackagesSent() + 1);
+                passengerProfile.setTripsReceived(passengerProfile.getTripsReceived() + 1);
+            } else {
+                passengerProfile.setTripsReceived(passengerProfile.getTripsReceived() + 1);
+            }
+
+            userProfileRepository.save(profile);
+        });
         return ResponseEntity.status(HttpStatus.OK).body("Ju fituat " + totalEarned + "ALL nga ky udhetim");
     }
 
@@ -240,7 +265,7 @@ public class TripService implements ITripService {
         User authenticatedUser = userService.getAuthenticatedUser();
 
         Set<TripResponse> activeTripsAsDriver = tripRepository.getTripsByDriverAndTripStatus(authenticatedUser, TripStatus.CREATED);
-        if (activeTripsAsDriver.isEmpty()){
+        if (activeTripsAsDriver.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si shofer");
         }
         return ResponseEntity.status(HttpStatus.OK).body(activeTripsAsDriver);
@@ -257,10 +282,87 @@ public class TripService implements ITripService {
                 .stream()
                 .map(Booking::getTrip)
                 .collect(Collectors.toSet());
-        if (activeTripsAsPassenger.isEmpty()){
+
+        Set<TripResponse> tripResponses = activeTripsAsPassenger.stream().map(trip -> new TripResponse() {
+            @Override
+            public Long getId() {
+                return trip.getId();
+            }
+
+            @Override
+            public String getStartCity() {
+                return trip.getStartCity();
+            }
+
+            @Override
+            public String getEndCity() {
+                return trip.getEndCity();
+            }
+
+            @Override
+            public LocalDate getDate() {
+                return trip.getDate();
+            }
+
+            @Override
+            public LocalTime getTime() {
+                return trip.getTime();
+            }
+
+            @Override
+            public double getPricePerSeat() {
+                return trip.getPricePerSeat();
+            }
+
+            @Override
+            public double getDuration() {
+                return trip.getDuration();
+            }
+
+            @Override
+            public double getDistance() {
+                return trip.getDistance();
+            }
+
+            @Override
+            public int getAvailableSeats() {
+                return trip.getAvailableSeats();
+            }
+
+            @Override
+            public int getTotalSeats() {
+                return trip.getTotalSeats();
+            }
+
+            @Override
+            public Long getDriverId() {
+                return trip.getDriver().getId();
+            }
+
+            @Override
+            public String getDriverFirstname() {
+                return trip.getDriver().getProfile().getFirstname();
+            }
+
+            @Override
+            public String getDriverLastname() {
+                return trip.getDriver().getProfile().getLastname();
+            }
+
+            @Override
+            public String getDriverProfilePictureURL() {
+                return trip.getDriver().getProfile().getProfilePictureUrl();
+            }
+
+            @Override
+            public Long getCarId() {
+                return trip.getCar().getId();
+            }
+        }).collect(Collectors.toSet());
+        if (tripResponses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si pasagjer");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(activeTripsAsPassenger);
+        return ResponseEntity.status(HttpStatus.OK).body(tripResponses);
     }
 
     public Trip saveTrip(Trip trip) {
@@ -270,7 +372,7 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getAllTrips(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<TripResponse> trips = tripRepository.findAllByTripStatus(pageable , TripStatus.CREATED ).stream().toList();
+        List<TripResponse> trips = tripRepository.findAllByTripStatus(pageable, TripStatus.CREATED).stream().toList();
 
         if (trips.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");
@@ -292,7 +394,7 @@ public class TripService implements ITripService {
     @Override
     public ResponseEntity<?> getFilteredTrips(int page, int size, String startCity, String endCity, String date) {
         Pageable pageable = PageRequest.of(page, size);
-        List<TripResponse> filteredTrips = tripRepository.findAllByStartCityAndEndCityAndDateAndTripStatus(startCity, endCity, LocalDate.parse(date), pageable ,TripStatus.CREATED).stream().toList();
+        List<TripResponse> filteredTrips = tripRepository.findAllByStartCityAndEndCityAndDateAndTripStatus(startCity, endCity, LocalDate.parse(date), pageable, TripStatus.CREATED).stream().toList();
 
         if (filteredTrips == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk ekziston asnje udhetim aktiv");

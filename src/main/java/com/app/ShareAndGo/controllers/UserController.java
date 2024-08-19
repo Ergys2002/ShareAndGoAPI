@@ -75,5 +75,14 @@ public class UserController {
         return userService.getAuthenticatedAdmin();
     }
 
+    @GetMapping("/user/stats")
+    public ResponseEntity<?> getUserStatistics(){
+        return userService.getUserStatistics();
+    }
+
+    @PutMapping("/admin/ban-user")
+    public ResponseEntity<?> banUser(@RequestParam("id") Long userId){
+        return userService.banUser(userId);
+    }
 
 }

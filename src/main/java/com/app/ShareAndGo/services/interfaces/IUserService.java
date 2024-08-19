@@ -27,4 +27,8 @@ public interface IUserService {
     User connectUser();
 
     User disconnectUser();
+
+    ResponseEntity<?> getUserStatistics();
+
+    ResponseEntity<?> banUser(Long userId);
 }

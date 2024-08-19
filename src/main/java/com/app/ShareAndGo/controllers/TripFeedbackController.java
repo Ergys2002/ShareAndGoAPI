@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/feedback")
 @RequiredArgsConstructor
@@ -17,17 +19,27 @@ public class TripFeedbackController {
     private final IReportService reportService;
 
     @PostMapping("/review/leave-review")
-    public ResponseEntity<?> createReview(@RequestBody ReviewRequest request){
+    public ResponseEntity<?> createReview(@RequestBody ReviewRequest request) {
         return reviewService.createReview(request);
     }
 
     @PostMapping("/report/create-report")
-    public ResponseEntity<?> createReport(@RequestBody ReportRequest request){
+    public ResponseEntity<?> createReport(@RequestBody ReportRequest request) {
         return reportService.createReport(request);
     }
 
     @GetMapping("/review/by-trip")
-    public ResponseEntity<?> getReviewsByTripId(@RequestParam("id") Long tripId){
+    public ResponseEntity<?> getReviewsByTripId(@RequestParam("id") Long tripId) {
         return reviewService.getReviewsByTripId(tripId);
+    }
+
+    @GetMapping("/admin/report/un-checked")
+    public ResponseEntity<?> getUncheckedReportsFilteredByDate(@RequestParam("begin") LocalDate begin, @RequestParam("end") LocalDate end) {
+        return reportService.getUncheckedReviewsFilteredByDate(begin, end);
+    }
+
+    @PutMapping("/admin/check-report")
+    public ResponseEntity<?> checkReport(@RequestParam("id") Long reportId){
+        return reportService.checkReport(reportId);
     }
 }

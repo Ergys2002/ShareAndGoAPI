@@ -10,4 +10,13 @@ public interface WithdrawalResponse {
     double getAmount();
     @Value("#{target.user.id}")
     Long getUserId();
+
+    @Value("#{target.user.profile.firstname}")
+    String getUserFirstname();
+
+    @Value("#{target.user.profile.lastname}")
+    String getUserLastname();
+
+    @Value("#{target.user.profile.profilePictureUrl}")
+    String getUserProfilePictureURL();
 }

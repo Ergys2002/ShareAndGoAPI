@@ -36,10 +36,15 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ws/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/sup-admin/create-admin").hasAuthority("SUPERADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/user/sign-up", "/api/user/login").permitAll()
+                        .requestMatchers(
+                                "/ws/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/admin/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/sup-admin/create-admin").hasAuthority("SUPERADMIN")
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/user/sign-up",
+                                "/api/user/login").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/trip/create-trip",
                                 "/api/trip/3-latest",
@@ -51,9 +56,17 @@ public class SecurityConfig {
                                 "/api/feedback/review/leave-review"
                         ).hasAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/withdrawal/admin/pending-withdrawals").hasAnyAuthority("ADMIN", "SUPERADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/car/delete-car").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/withdrawal/admin/confirm-withdrawal", "/api/withdrawal/admin/reject-withdrawal").hasAnyAuthority("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/withdrawal/admin/pending-withdrawals" ,
+                                "/api/admin/auth-admin",
+                                "/api/feedback/admin/report/un-checked").hasAnyAuthority("ADMIN", "SUPERADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/car/delete-car").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/withdrawal/admin/confirm-withdrawal",
+                                "/api/withdrawal/admin/reject-withdrawal",
+                                "/api/admin/ban-user",
+                                "/api/feedback/admin/check-report").hasAnyAuthority("ADMIN", "SUPERADMIN")
                         .requestMatchers(HttpMethod.PUT,
                                 "/api/booking/reject-application",
                                 "/api/booking/confirm-application",
@@ -70,9 +83,14 @@ public class SecurityConfig {
                                 "/api/feedback/review/by-trip",
                                 "/api/withdrawal/all-withdrawals",
                                 "/api/trip-application/**",
-                                "/api/booking/by-trip"
+                                "/api/booking/by-trip",
+                                "/api/user/stats"
                         ).hasAuthority("USER")
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/swagger-resources").permitAll()
                 )
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.contentSecurityPolicy(contentSecurityPolicyConfig -> contentSecurityPolicyConfig.policyDirectives("connect-src 'self' ws://localhost:8080")))
 

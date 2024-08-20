@@ -86,6 +86,7 @@ public class SecurityConfig {
                                 "/api/booking/by-trip",
                                 "/api/user/stats"
                         ).hasAuthority("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/user/info").authenticated()
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

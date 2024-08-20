@@ -2,6 +2,7 @@ package com.app.ShareAndGo.services.classes;
 
 import com.app.ShareAndGo.dto.requests.TripCreationRequest;
 import com.app.ShareAndGo.dto.responses.TripResponse;
+import com.app.ShareAndGo.dto.responses.UserResponse;
 import com.app.ShareAndGo.entities.*;
 import com.app.ShareAndGo.enums.ApplicationStatus;
 import com.app.ShareAndGo.enums.BookingStatus;
@@ -363,6 +364,41 @@ public class TripService implements ITripService {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nuk keni asnje udhetim si pasagjer");
         }
         return ResponseEntity.status(HttpStatus.OK).body(tripResponses);
+    }
+
+    @Override
+    public ResponseEntity<?> getPassengersByTripId(Long tripId) {
+        Trip trip = tripRepository.findById(tripId).orElse(null);
+
+        if (trip == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Udhetimi nuk ekziston");
+        }
+
+        Set<User> passengers = trip.getBookings().stream().map(Booking::getPassenger).collect(Collectors.toSet());
+
+        Set<UserResponse> userResponses = passengers.stream().map(user -> new UserResponse() {
+            @Override
+            public String getPhoneNumber() {
+                return user.getPhoneNumber();
+            }
+
+            @Override
+            public double getAccountBalance() {
+                return user.getAccountBalance();
+            }
+
+            @Override
+            public String getEmail() {
+                return user.getEmail();
+            }
+
+            @Override
+            public UserProfile getProfile() {
+                return user.getProfile();
+            }
+        }).collect(Collectors.toSet());
+
+        return ResponseEntity.status(HttpStatus.OK).body(userResponses);
     }
 
     public Trip saveTrip(Trip trip) {

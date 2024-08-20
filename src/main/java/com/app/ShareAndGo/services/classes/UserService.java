@@ -7,6 +7,8 @@ import com.app.ShareAndGo.entities.PreviousPassword;
 import com.app.ShareAndGo.entities.User;
 import com.app.ShareAndGo.entities.UserProfile;
 import com.app.ShareAndGo.enums.ActivityStatus;
+import com.app.ShareAndGo.enums.BookingType;
+import com.app.ShareAndGo.enums.FeedbackType;
 import com.app.ShareAndGo.enums.Role;
 import com.app.ShareAndGo.repositories.PreviousPasswordRepository;
 import com.app.ShareAndGo.repositories.UserProfileRepository;
@@ -428,6 +430,28 @@ public class UserService implements IUserService {
 
         userRepository.save(userToBeBanned);
         return ResponseEntity.status(HttpStatus.OK).body("User has been banned");
+    }
+
+    @Override
+    public ResponseEntity<?> getUserInfo(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Perdoruesi nuk ekziston");
+        }
+
+        UserProfile profile = user.getProfile();
+
+        UserInfoResponse userInfoResponse = UserInfoResponse.builder()
+                .rating(profile.getRating())
+                .totalReports((int) user.getFeedbacksReceived().stream().filter(tripFeedback -> tripFeedback.getFeedbackType().equals(FeedbackType.REPORT)).count())
+                .totalReviews((int) user.getFeedbacksReceived().stream().filter(tripFeedback -> tripFeedback.getFeedbackType().equals(FeedbackType.REVIEW)).count())
+                .totalTripsOffered(user.getTripsAsDriver().size())
+                .totalTripsReceived(user.getBookings().size())
+                .totalPackagesSent(user.getPackages().size())
+                .totalPackagesDelivered((int) user.getBookings().stream().filter(booking -> booking.getBookingType().equals(BookingType.PASSENGER_WITH_PACKAGE) ||  booking.getBookingType().equals(BookingType.PACKAGE_ONLY)).count())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(userInfoResponse);
     }
 
     private void updateBasicProfileInfo(UserProfile userProfile, ProfileUpdateRequest profileUpdateRequest) {

@@ -30,4 +30,6 @@ public interface ITripService {
     ResponseEntity<?> getActiveTripsAsDriver();
 
     ResponseEntity<?> getActiveTripsAsPassenger();
+
+    ResponseEntity<?> getPassengersByTripId(Long tripId);
 }

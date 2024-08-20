@@ -80,6 +80,11 @@ public class UserController {
         return userService.getUserStatistics();
     }
 
+    @GetMapping("/user/info")
+    public ResponseEntity<?> getUserInfo(@RequestParam("id") Long id){
+        return userService.getUserInfo(id);
+    }
+
     @PutMapping("/admin/ban-user")
     public ResponseEntity<?> banUser(@RequestParam("id") Long userId){
         return userService.banUser(userId);

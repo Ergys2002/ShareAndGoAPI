@@ -77,6 +77,11 @@ public class TripController {
 
     }
 
+    @GetMapping("/passengers")
+    public ResponseEntity<?> getPassengersByTripId(@RequestParam("id") Long tripId){
+        return tripService.getPassengersByTripId(tripId);
+    }
+
     @PutMapping("/finish-trip")
     public ResponseEntity<?> endTrip(){
         return tripService.endActiveTripOfAuthenticatedUser();

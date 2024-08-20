@@ -31,4 +31,6 @@ public interface IUserService {
     ResponseEntity<?> getUserStatistics();
 
     ResponseEntity<?> banUser(Long userId);
+
+    ResponseEntity<?> getUserInfo(Long id);
 }
